@@ -1,7 +1,7 @@
 'use client'
 import { Badge } from "@/features/common-ui/badge";
 import { deleteUser, loadUsers, toggleUserBlock } from "@/lib/api/users";
-import { User, UserFilters, UserStatus } from "@/types/user";
+import { User, UserFilters, UserRole, UserStatus } from "@/types/user";
 import { useCallback, useEffect, useState } from "react";
 
 export function useUsersView() {
@@ -65,9 +65,9 @@ export function useUsersView() {
         }
     };
 
-    const handleToggleBlock = async (userId: number) => {
+    const handleToggleBlock = async (userId: number, user_role:UserRole) => {
         try {
-            await toggleUserBlock(userId);
+            await toggleUserBlock(userId, user_role);
             fetchUsers();
         } catch (error) {
             console.error('Error toggling user block:', error);

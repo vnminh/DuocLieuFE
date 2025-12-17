@@ -6,9 +6,11 @@ import { Input } from '@/features/common-ui/input';
 import { Select } from '@/features/common-ui/select';
 import { Badge } from '@/features/common-ui/badge';
 import { UserFormModal } from '@/features/admin/users/component/UserFormModal';
-import { User, UserStatus, UserFilters } from '@/types/user';
+import { User, UserStatus, UserFilters, UserRole } from '@/types/user';
 import { loadUsers, deleteUser, toggleUserBlock } from '@/lib/api/users';
 import { useUsersView } from '../hook/useUsersView';
+import { cookieStorage } from '@/lib/cookieStorage';
+import { Plus, Upload } from 'lucide-react';
 
 export default function UsersView() {
   const {
@@ -31,7 +33,14 @@ export default function UsersView() {
       totalPages,
       showModal,
       editingUser,
-    } = useUsersView()
+    } = useUsersView();
+
+  const [csvMode, setCsvMode] = useState(false);
+
+  const handleOpenCsvMode = () => {
+    setCsvMode(true);
+    setShowModal(true);
+  };
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -40,9 +49,16 @@ export default function UsersView() {
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
           <p className="text-gray-600 mt-1">Manage system users and their roles</p>
         </div>
-        <Button onClick={handleCreateUser}>
-          Create User
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={handleOpenCsvMode} variant="secondary">
+            <Upload className="w-4 h-4 mr-2" />
+            Import CSV
+          </Button>
+          <Button onClick={handleCreateUser}>
+            <Plus className="w-4 h-4 mr-2" />
+            Create User
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -165,7 +181,7 @@ export default function UsersView() {
                         <Button
                           size="sm"
                           variant={user.status === UserStatus.ACTIVE ? 'secondary' : 'primary'}
-                          onClick={() => handleToggleBlock(user.id)}
+                          onClick={() => handleToggleBlock(user.id, cookieStorage.getUser()?.role || UserRole.USER)}
                         >
                           {user.status === UserStatus.ACTIVE ? 'Block' : 'Unblock'}
                         </Button>
@@ -222,7 +238,10 @@ export default function UsersView() {
       {/* User Form Modal */}
       <UserFormModal
         isOpen={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={() => {
+          setShowModal(false);
+          setCsvMode(false);
+        }}
         onSuccess={handleModalSuccess}
         user={editingUser}
       />

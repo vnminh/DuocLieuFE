@@ -3,17 +3,65 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/features/common-ui/button';
 import { Upload, FileText, AlertCircle, CheckCircle } from 'lucide-react';
+import { parseCSVFile, CSVPreviewData, validateCSVHeaders } from '@/lib/csvPreview';
 
 interface CsvUploadProps {
   onUpload: (file: File) => Promise<{ success: number, errors: string[] }>;
   acceptedColumns: string[];
   sampleData?: Record<string, string>;
+  requiredFields?: string[];
+  showPreview?: boolean;
+  previewRows?: number;
 }
 
-export function CsvUpload({ onUpload, acceptedColumns, sampleData }: CsvUploadProps) {
+interface ParsedCSVState {
+  data: CSVPreviewData | null;
+  error: string | null;
+  loading: boolean;
+}
+
+/**
+ * CSV Upload Component with Preview
+ * 
+ * Features:
+ * - Drag and drop file upload
+ * - CSV file validation and preview
+ * - Header validation against required fields
+ * - Sample data download
+ * - Upload result feedback
+ * 
+ * @example
+ * ```tsx
+ * <CsvUpload
+ *   onUpload={uploadHosCsv}
+ *   acceptedColumns={['ten_khoa_hoc', 'ten_tieng_viet', 'ten_nganh_khoa_hoc']}
+ *   requiredFields={['ten_khoa_hoc', 'ten_nganh_khoa_hoc']}
+ *   sampleData={{
+ *     ten_khoa_hoc: 'Họ A',
+ *     ten_tieng_viet: 'Họ A Tiếng Việt',
+ *     ten_nganh_khoa_hoc: 'Ngành B'
+ *   }}
+ *   showPreview={true}
+ *   previewRows={5}
+ * />
+ * ```
+ */
+export function CsvUpload({ 
+  onUpload, 
+  acceptedColumns, 
+  sampleData,
+  requiredFields = [],
+  showPreview = true,
+  previewRows = 5
+}: CsvUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [results, setResults] = useState<{ success: number, errors: string[] } | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [csvPreview, setCSVPreview] = useState<ParsedCSVState>({ 
+    data: null, 
+    error: null, 
+    loading: false 
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (file: File) => {
@@ -22,6 +70,37 @@ export function CsvUpload({ onUpload, acceptedColumns, sampleData }: CsvUploadPr
       return;
     }
 
+    // Parse CSV for preview
+    if (showPreview) {
+      setCSVPreview({ data: null, error: null, loading: true });
+      try {
+        const parsedData = await parseCSVFile(file, previewRows);
+        
+        // Validate headers if required fields specified
+        if (requiredFields.length > 0) {
+          const validation = validateCSVHeaders(parsedData.headers, requiredFields);
+          if (!validation.isValid) {
+            setCSVPreview({
+              data: null,
+              error: `Missing required columns: ${validation.missingFields.join(', ')}`,
+              loading: false
+            });
+            return;
+          }
+        }
+        
+        setCSVPreview({ data: parsedData, error: null, loading: false });
+      } catch (err) {
+        setCSVPreview({
+          data: null,
+          error: err instanceof Error ? err.message : 'Failed to parse CSV',
+          loading: false
+        });
+        return;
+      }
+    }
+
+    // Upload file
     setUploading(true);
     setResults(null);
 
@@ -143,6 +222,73 @@ export function CsvUpload({ onUpload, acceptedColumns, sampleData }: CsvUploadPr
           >
             Download Sample CSV
           </Button>
+        </div>
+      )}
+
+      {/* CSV Preview Loading State */}
+      {showPreview && csvPreview.loading && (
+        <div className="flex items-center justify-center p-4 bg-blue-50 rounded-lg">
+          <div className="text-sm text-blue-700">Processing CSV file...</div>
+        </div>
+      )}
+
+      {/* CSV Preview Error State */}
+      {showPreview && csvPreview.error && (
+        <div className="rounded-lg p-4 bg-red-50">
+          <div className="flex items-center mb-2">
+            <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
+            <h4 className="font-medium text-red-800">CSV Validation Error</h4>
+          </div>
+          <p className="text-sm text-red-700">{csvPreview.error}</p>
+        </div>
+      )}
+
+      {/* CSV Preview Table */}
+      {showPreview && csvPreview.data && (
+        <div className="rounded-lg border border-gray-200 p-4 overflow-auto">
+          <div className="mb-3">
+            <h4 className="font-medium text-gray-900 mb-2">CSV Preview</h4>
+            <p className="text-sm text-gray-600">
+              Total rows: <span className="font-semibold">{csvPreview.data.totalRows}</span>
+            </p>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  {csvPreview.data.headers.map((header) => (
+                    <th 
+                      key={header}
+                      className="text-left px-3 py-2 bg-gray-50 font-medium text-gray-700"
+                    >
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {csvPreview.data.preview.map((row, idx) => (
+                  <tr key={idx} className="border-b hover:bg-gray-50">
+                    {csvPreview.data!.headers.map((header) => (
+                      <td 
+                        key={`${idx}-${header}`}
+                        className="px-3 py-2 text-gray-700"
+                      >
+                        {row[header] || '-'}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {csvPreview.data.totalRows > csvPreview.data.preview.length && (
+            <p className="text-xs text-gray-600 mt-2">
+              ... and {csvPreview.data.totalRows - csvPreview.data.preview.length} more rows
+            </p>
+          )}
         </div>
       )}
 

@@ -10,6 +10,9 @@ export interface Loai {
   ho?: any; // Avoid circular import with Ho
   dac_diem_sinh_hoc?: DacDiemSinhHoc;
   vi_tri_dia_li?: ViTriDiaLi[];
+  khai_thac_va_che_bien?: KhaiThacVaCheBien;
+  hinh_anh?: HinhAnh;
+  cong_dung_va_thanh_phan_hoa_hoc?: CongDungVaThanPhanHoaHoc[];
 }
 
 export interface CreateLoaiData {
@@ -17,6 +20,41 @@ export interface CreateLoaiData {
   ten_tieng_viet?: string;
   ten_goi_khac?: string;
   ten_ho_khoa_hoc: string;
+}
+
+// Extended data type for creating loai with all nested data (flattened)
+export interface CreateLoaiWithDetailsData {
+  // Loai fields
+  ten_khoa_hoc: string;
+  ten_tieng_viet?: string;
+  ten_goi_khac?: string;
+  ten_ho_khoa_hoc: string;
+
+  // Dac_diem_sinh_hoc fields
+  dac_diem_mo_ta?: string;
+  dang_song?: string;
+  tru_luong?: string;
+  muc_do_quy_hiem?: MucDoQuyHiem;
+  phuong_an_bao_ton?: string;
+
+  // Khai_thac_va_che_bien fields
+  chi_tiet_ky_thuat?: string;
+  hien_trang_gay_trong_phat_trien?: string;
+  ky_thuat_trong_cham_soc_thu_hoach?: string;
+
+  // Hinh_anh fields
+  collection_uri?: string;
+
+  // Cong_dung_va_thanh_phan_hoa_hoc fields (can have multiple)
+  bo_phan_su_dung?: string[];
+  cong_dung?: string[];
+  bai_thuoc?: string[];
+  tac_dung_duoc_ly?: string[];
+
+  // Vi_tri_dia_li fields (can have multiple)
+  kinh_do?: number[];
+  vi_do?: number[];
+  id_vung_phan_bo?: number[];
 }
 
 export interface UpdateLoaiData {
@@ -51,6 +89,35 @@ export interface DacDiemSinhHoc {
   tru_luong?: string;
   muc_do_quy_hiem: MucDoQuyHiem;
   phuong_an_bao_ton?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface KhaiThacVaCheBien {
+  id: number;
+  ten_loai_khoa_hoc: string;
+  chi_tiet_ky_thuat?: string;
+  hien_trang_gay_trong_phat_trien?: string;
+  ky_thuat_trong_cham_soc_thu_hoach?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface HinhAnh {
+  id: number;
+  ten_loai_khoa_hoc: string;
+  collection_uri?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface CongDungVaThanPhanHoaHoc {
+  id: number;
+  ten_loai_khoa_hoc: string;
+  bo_phan_su_dung?: string;
+  cong_dung?: string;
+  bai_thuoc?: string;
+  tac_dung_duoc_ly?: string;
   created_at: Date;
   updated_at: Date;
 }
