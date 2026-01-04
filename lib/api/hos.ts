@@ -16,11 +16,11 @@ export async function loadHos(filters: HoFilters = {}): Promise<{ hos: Ho[], tot
     ten_nganh_khoa_hoc: filters.ten_nganh_khoa_hoc,
   });
 
-  const response = await apiGet<APIResponse<Ho[]>>(`/hos/all${queryString}`);
+  const response = await apiGet<any>(`/hos/all-hos${queryString}`);
   return {
-    hos: response.data as Ho[],
-    total: response.data?.length || 0,
-    pages: Math.ceil((response.data?.length || 0) / (filters.limit || 10)),
+    hos: response.hos as Ho[] || [],
+    total: response.total || 0,
+    pages: response.pages || 0,
   };
 }
 

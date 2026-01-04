@@ -3,7 +3,7 @@ import { UserFormModalProps } from "../types/users";
 import { CreateUserData, Role, UpdateUserData, UserRole, UserStatus } from "@/types/user";
 import { createUser, updateUser } from "@/lib/api/users";
 
-export function useUsersFormModal({ isOpen, onClose, onSuccess, user }: UserFormModalProps) {
+export function useUsersFormModal({ isOpen, onClose, onSuccess, user, viewMode }: UserFormModalProps) {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         full_name: '',
@@ -18,18 +18,24 @@ export function useUsersFormModal({ isOpen, onClose, onSuccess, user }: UserForm
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const isEditMode = !!user;
+    const isEditMode = !!user && !viewMode;
 
     useEffect(() => {
         if (isOpen) {
 
             if (user) {
+                const dateOfBirth = user.date_of_birth 
+                    ? (user.date_of_birth instanceof Date 
+                        ? user.date_of_birth 
+                        : new Date(user.date_of_birth))
+                    : null;
+                
                 setFormData({
                     full_name: user.full_name || '',
                     email: user.email || '',
                     password: '',
                     address: user.address || '',
-                    date_of_birth: user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '',
+                    date_of_birth: dateOfBirth ? dateOfBirth.toISOString().split('T')[0] : '',
                     gender: user.gender || '',
                     avatar: user.avatar || '',
                     status: user.status,
@@ -54,6 +60,7 @@ export function useUsersFormModal({ isOpen, onClose, onSuccess, user }: UserForm
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
+        console.log(name,'=',value)
         setFormData(prev => ({
             ...prev,
             [name]: value

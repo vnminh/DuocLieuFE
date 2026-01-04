@@ -5,4 +5,5 @@ export interface HoFormModalProps {
   onClose: () => void;
   onSuccess: () => void;
   ho?: Ho | null;
+  viewMode?: boolean;
 }

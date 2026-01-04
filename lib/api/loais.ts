@@ -1,6 +1,5 @@
 import { 
   Loai, LoaiFilters, CreateLoaiData, UpdateLoaiData, CreateLoaiWithDetailsData,
-  VungPhanBo,
   MucDoQuyHiem
 } from '@/types/loais';
 import { apiGet, apiPost, apiPut, apiDelete, apiPostFormData, buildQueryString, APIResponse, CSVUploadResponse } from './client';
@@ -78,20 +77,6 @@ export async function deleteLoai(id: number): Promise<Loai> {
   return response.data || response;
 }
 
-/**
- * Load all Vùng Phân Bố (Geographic Distribution)
- * Note: This endpoint is not documented in API_END_POINT.md
- * Assuming it exists for loading distribution zones
- */
-export async function loadVungPhanBos(): Promise<VungPhanBo[]> {
-  try {
-    const response = await apiGet<any>('/loais/vung-phan-bo');
-    return response.data || response || [];
-  } catch (error) {
-    console.warn('Failed to load Vùng Phân Bố:', error);
-    return [];
-  }
-}
 
 /**
  * Upload Loài CSV file with optional nested data

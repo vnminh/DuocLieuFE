@@ -130,13 +130,4 @@ export interface ViTriDiaLi {
   id_vung_phan_bo?: number;
   created_at: Date;
   updated_at: Date;
-  vung_phan_bo?: VungPhanBo;
-}
-
-export interface VungPhanBo {
-  id: number;
-  ten_dia_phan_hanh_chinh: string;
-  danh_sach_diem_bien?: string;
-  created_at: Date;
-  updated_at: Date;
 }

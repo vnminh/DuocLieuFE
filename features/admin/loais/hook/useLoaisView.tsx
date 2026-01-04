@@ -1,19 +1,23 @@
 'use client'
 import { Badge } from "@/features/common-ui/badge";
-import { deleteLoai, loadLoais, loadVungPhanBos } from "@/lib/api/loais";
+import { deleteLoai, loadLoais } from "@/lib/api/loais";
 import { loadAllHos } from "@/lib/api/hos";
 import { loadAllNganhs } from "@/lib/api/nganhs";
-import { Loai, LoaiFilters, VungPhanBo } from "@/types/loais";
+import { loadAllVungPhanBos } from "@/lib/api/vung-phan-bo";
+import { Loai, LoaiFilters } from "@/types/loais";
 import { Ho } from "@/types/hos";
 import { Nganh } from "@/types/nganhs";
+import { VungPhanBo } from "@/types/vung-phan-bo";
 import { useCallback, useEffect, useState } from "react";
 
 export function useLoaisView() {
     const [loais, setLoais] = useState<Loai[]>([]);
     const [loading, setLoading] = useState(true);
     const [total, setTotal] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [editingLoai, setEditingLoai] = useState<Loai | null>(null);
+    const [isViewMode, setIsViewMode] = useState(false);
     const [hos, setHos] = useState<Ho[]>([]);
     const [nganhs, setNganhs] = useState<Nganh[]>([]);
     const [vungPhanBos, setVungPhanBos] = useState<VungPhanBo[]>([]);
@@ -40,12 +44,12 @@ export function useLoaisView() {
         Promise.all([
             loadAllHos(),
             loadAllNganhs(),
-            loadVungPhanBos()
+            loadAllVungPhanBos()
         ]).then(([hosData, nganhsData, vungPhanBoData]) => {
-            setHos(hosData);
+            setHos(hosData.hos);
             setNganhs(nganhsData);
             setVungPhanBos(vungPhanBoData);
-            setFilteredHos(hosData);
+            setFilteredHos(hosData.hos);
         }).catch(console.error);
     }, []);
 
@@ -73,6 +77,7 @@ export function useLoaisView() {
             const response = await loadLoais(filters);
             setLoais(response.loais);
             setTotal(response.total);
+            setTotalPages(response.pages);
         } catch (error) {
             console.error('Error loading loais:', error);
         } finally {
@@ -86,11 +91,19 @@ export function useLoaisView() {
 
     const handleCreateLoai = () => {
         setEditingLoai(null);
+        setIsViewMode(false);
         setShowModal(true);
     };
 
     const handleEditLoai = (loai: Loai) => {
         setEditingLoai(loai);
+        setIsViewMode(false);
+        setShowModal(true);
+    };
+
+    const handleViewLoai = (loai: Loai) => {
+        setEditingLoai(loai);
+        setIsViewMode(true);
         setShowModal(true);
     };
 
@@ -135,7 +148,6 @@ export function useLoaisView() {
         return new Date(date).toLocaleDateString();
     };
 
-    const totalPages = Math.ceil(total / (filters.limit || 10));
     const hasActiveFilters = filters.search || filters.ten_ho_khoa_hoc || filters.ten_nganh_khoa_hoc || filters.vung_phan_bo;
 
     return {
@@ -145,6 +157,7 @@ export function useLoaisView() {
         clearFilters,
         formatDate,
         handleEditLoai,
+        handleViewLoai,
         handleDeleteLoai,
         setShowModal,
         handleModalSuccess,
@@ -162,5 +175,6 @@ export function useLoaisView() {
         showModal,
         editingLoai,
         hasActiveFilters,
+        isViewMode,
     }
 }

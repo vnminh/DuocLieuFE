@@ -10,8 +10,10 @@ export function useHosView() {
     const [hos, setHos] = useState<Ho[]>([]);
     const [loading, setLoading] = useState(true);
     const [total, setTotal] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [editingHo, setEditingHo] = useState<Ho | null>(null);
+    const [isViewMode, setIsViewMode] = useState(false);
     const [nganhs, setNganhs] = useState<Nganh[]>([]);
     const [filters, setFilters] = useState<HoFilters>({
         search: '',
@@ -39,6 +41,7 @@ export function useHosView() {
             const response = await loadHos(filters);
             setHos(response.hos);
             setTotal(response.total);
+            setTotalPages(response.pages);
         } catch (error) {
             console.error('Error loading hos:', error);
         } finally {
@@ -52,11 +55,19 @@ export function useHosView() {
 
     const handleCreateHo = () => {
         setEditingHo(null);
+        setIsViewMode(false);
         setShowModal(true);
     };
 
     const handleEditHo = (ho: Ho) => {
         setEditingHo(ho);
+        setIsViewMode(false);
+        setShowModal(true);
+    };
+
+    const handleViewHo = (ho: Ho) => {
+        setEditingHo(ho);
+        setIsViewMode(true);
         setShowModal(true);
     };
 
@@ -89,7 +100,6 @@ export function useHosView() {
         return new Date(date).toLocaleDateString();
     };
 
-    const totalPages = Math.ceil(total / (filters.limit || 10));
 
     return {
         handleCreateHo,
@@ -97,6 +107,7 @@ export function useHosView() {
         handleNganhFilterChange,
         formatDate,
         handleEditHo,
+        handleViewHo,
         handleDeleteHo,
         setShowModal,
         handleModalSuccess,
@@ -110,5 +121,6 @@ export function useHosView() {
         totalPages,
         showModal,
         editingHo,
+        isViewMode,
     }
 }

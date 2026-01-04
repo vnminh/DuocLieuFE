@@ -126,7 +126,7 @@ export async function uploadNganhsCsv(file: File): Promise<CSVUploadResponse<Nga
  */
 export async function loadAllNganhs(): Promise<Nganh[]> {
   try {
-    const response = await apiGet<any>('/nganhs/all-nganhs?limit=1000');
+    const response = await apiGet<any>('/nganhs/all-nganhs?limit=1000&page=1');
     return response.nganhs || [];
   } catch (error) {
     console.warn('Failed to load all Ngành:', error);

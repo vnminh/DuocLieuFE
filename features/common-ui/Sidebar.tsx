@@ -13,6 +13,7 @@ import {
   Layers,
   FileText,
   Settings,
+  MapPin,
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -46,6 +47,11 @@ const sidebarItems: SidebarItem[] = [
     name: 'Loais',
     href: '/admin/loais',
     icon: <Layers className="w-5 h-5" />,
+  },
+  {
+    name: 'Vùng Phân Bố',
+    href: '/admin/vung-phan-bo',
+    icon: <MapPin className="w-5 h-5" />,
   },
   {
     name: 'Settings',

@@ -62,6 +62,7 @@ export function CsvUpload({
     error: null, 
     loading: false 
   });
+  const [showAllRows, setShowAllRows] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (file: File) => {
@@ -73,6 +74,7 @@ export function CsvUpload({
     // Parse CSV for preview
     if (showPreview) {
       setCSVPreview({ data: null, error: null, loading: true });
+      setShowAllRows(false);
       try {
         const parsedData = await parseCSVFile(file, previewRows);
         
@@ -268,7 +270,7 @@ export function CsvUpload({
                 </tr>
               </thead>
               <tbody>
-                {csvPreview.data.preview.map((row, idx) => (
+                {(showAllRows ? csvPreview.data.rows : csvPreview.data.preview).map((row, idx) => (
                   <tr key={idx} className="border-b hover:bg-gray-50">
                     {csvPreview.data!.headers.map((header) => (
                       <td 
@@ -285,9 +287,15 @@ export function CsvUpload({
           </div>
 
           {csvPreview.data.totalRows > csvPreview.data.preview.length && (
-            <p className="text-xs text-gray-600 mt-2">
-              ... and {csvPreview.data.totalRows - csvPreview.data.preview.length} more rows
-            </p>
+            <a 
+              className="text-xs text-gray-600 mt-2 hover:underline hover:cursor-pointer block"
+              onClick={() => setShowAllRows(!showAllRows)}
+            >
+              {showAllRows 
+                ? 'Hide' 
+                : `... and ${csvPreview.data.totalRows - csvPreview.data.preview.length} more rows`
+              }
+            </a>
           )}
         </div>
       )}

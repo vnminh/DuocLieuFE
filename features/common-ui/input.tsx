@@ -24,6 +24,7 @@ export function Input({ label, error, className, type, value, children, ...props
             className,
             !value && type==='date'?'text-gray-400':'text-gray-700'
           )}
+          value={value}
           type={type}
           {...props}
         />

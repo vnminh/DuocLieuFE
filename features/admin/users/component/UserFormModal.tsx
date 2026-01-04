@@ -12,9 +12,11 @@ import { UserFormModalProps } from '../types/users';
 import { useUsersFormModal } from '../hook/useUserFormModal';
 
 
-export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModalProps) {
+export function UserFormModal({ isOpen, onClose, onSuccess, user, viewMode }: UserFormModalProps) {
   const [activeTab, setActiveTab] = useState<'form' | 'csv'>('form');
   
+  console.log(user);
+
   const {
       handleSubmit,
       handleInputChange,
@@ -22,8 +24,10 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModa
       formData,
       errors,
       loading,
-    } = useUsersFormModal({ isOpen, onClose, onSuccess, user });
+    } = useUsersFormModal({ isOpen, onClose, onSuccess, user, viewMode });
 
+  console.log('formData =',formData)
+  
   useEffect(() => {
     if (isOpen) {
       setActiveTab(isEditMode ? 'form' : 'form');
@@ -54,11 +58,11 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModa
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditMode ? 'Edit User' : 'Create User'}
+      title={viewMode ? 'View User' : (isEditMode ? 'Edit User' : 'Create User')}
       className="max-w-2xl"
     >
       {/* Tabs */}
-      {!isEditMode && (
+      {!isEditMode && !viewMode && (
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-6">
           <button
             onClick={() => setActiveTab('form')}
@@ -94,6 +98,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModa
               onChange={handleInputChange}
               error={errors.full_name}
               placeholder="Enter full name"
+              disabled={viewMode}
             />
 
             <Input
@@ -104,6 +109,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModa
               onChange={handleInputChange}
               error={errors.email}
               placeholder="Enter email address"
+              disabled={viewMode}
             />
 
             {!isEditMode && (
@@ -124,6 +130,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModa
               value={formData.address}
               onChange={handleInputChange}
               placeholder="Enter address"
+              disabled={viewMode}
             />
 
             <Input
@@ -132,6 +139,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModa
               type="date"
               value={formData.date_of_birth}
               onChange={handleInputChange}
+              disabled={viewMode}
             />
 
             <Select
@@ -139,6 +147,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModa
               name="gender"
               value={formData.gender}
               onChange={handleInputChange}
+              disabled={viewMode}
             >
               <option value="" className='text-gray-400'>Select gender</option>
               <option value="Male" className='text-gray-700'>Male</option>
@@ -152,6 +161,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModa
               value={formData.avatar}
               onChange={handleInputChange}
               placeholder="Enter avatar URL"
+              disabled={viewMode}
             />
 
             <Select
@@ -160,6 +170,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModa
               value={formData.status}
               onChange={handleInputChange}
               error={errors.status}
+              disabled={viewMode}
             >
               <option value={UserStatus.ACTIVE}>Active</option>
               <option value={UserStatus.BLOCKED}>Blocked</option>
@@ -171,6 +182,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModa
               value={formData.role}
               onChange={handleInputChange}
               error={errors.role}
+              disabled={viewMode}
             >
               <option value={UserRole.USER}>User</option>
               <option value={UserRole.STAFF}>Staff</option>
@@ -189,14 +201,16 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user }: UserFormModa
               onClick={onClose}
               disabled={loading}
             >
-              Cancel
+              {viewMode ? 'Close' : 'Cancel'}
             </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
-            </Button>
+            {!viewMode && (
+              <Button
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
+              </Button>
+            )}
           </div>
         </form>
       )}

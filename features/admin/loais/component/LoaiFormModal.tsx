@@ -14,7 +14,7 @@ import { loadAllHos } from '@/lib/api/hos';
 import { loadAllNganhs } from '@/lib/api/nganhs';
 import { LoaiFormModalProps } from '../types/loais';
 
-export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModalProps) {
+export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: LoaiFormModalProps) {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'form' | 'csv'>('form');
   const [hos, setHos] = useState<Ho[]>([]);
@@ -45,7 +45,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const isEditMode = !!loai;
+  const isEditMode = !!loai && !viewMode;
 
   useEffect(() => {
     if (isOpen) {
@@ -64,23 +64,23 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
           ten_tieng_viet: loai.ten_tieng_viet || '',
           ten_goi_khac: loai.ten_goi_khac || '',
           ten_ho_khoa_hoc: loai.ten_ho_khoa_hoc || '',
-          ten_nganh_khoa_hoc: loai.ho?.ten_nganh_khoa_hoc || '',
-          dac_diem_mo_ta: '',
-          dang_song: '',
-          tru_luong: '',
-          muc_do_quy_hiem: '',
-          phuong_an_bao_ton: '',
-          chi_tiet_ky_thuat: '',
-          hien_trang_gay_trong_phat_trien: '',
-          ky_thuat_trong_cham_soc_thu_hoach: '',
-          collection_uri: '',
-          bo_phan_su_dung: '',
-          cong_dung: '',
-          bai_thuoc: '',
-          tac_dung_duoc_ly: '',
-          kinh_do: '',
-          vi_do: '',
-          id_vung_phan_bo: ''
+          ten_nganh_khoa_hoc: loai.ho?.nganh?.ten_khoa_hoc || '',
+          dac_diem_mo_ta: loai.dac_diem_sinh_hoc?.mo_ta || '',
+          dang_song: loai.dac_diem_sinh_hoc?.dang_song || '',
+          tru_luong: loai.dac_diem_sinh_hoc?.tru_luong || '',
+          muc_do_quy_hiem: loai.dac_diem_sinh_hoc?.muc_do_quy_hiem || '',
+          phuong_an_bao_ton: loai.dac_diem_sinh_hoc?.phuong_an_bao_ton || '',
+          chi_tiet_ky_thuat: loai.khai_thac_va_che_bien?.chi_tiet_ky_thuat || '',
+          hien_trang_gay_trong_phat_trien: loai.khai_thac_va_che_bien?.hien_trang_gay_trong_phat_trien || '',
+          ky_thuat_trong_cham_soc_thu_hoach: loai.khai_thac_va_che_bien?.ky_thuat_trong_cham_soc_thu_hoach || '',
+          collection_uri: loai.hinh_anh?.collection_uri || '',
+          bo_phan_su_dung: loai.cong_dung_va_thanh_phan_hoa_hoc?.map((cong_dung_va_thanh_phan_hoa_hoc)=>cong_dung_va_thanh_phan_hoa_hoc.bo_phan_su_dung).join(';')||'',
+          cong_dung: loai.cong_dung_va_thanh_phan_hoa_hoc?.map((cong_dung_va_thanh_phan_hoa_hoc)=>cong_dung_va_thanh_phan_hoa_hoc.cong_dung).join(';')||'',
+          bai_thuoc: loai.cong_dung_va_thanh_phan_hoa_hoc?.map((cong_dung_va_thanh_phan_hoa_hoc)=>cong_dung_va_thanh_phan_hoa_hoc.bai_thuoc).join(';')||'',
+          tac_dung_duoc_ly: loai.cong_dung_va_thanh_phan_hoa_hoc?.map((cong_dung_va_thanh_phan_hoa_hoc)=>cong_dung_va_thanh_phan_hoa_hoc.tac_dung_duoc_ly).join(';')||'',
+          kinh_do: loai.vi_tri_dia_li?.map((vi_tri_dia_li)=>vi_tri_dia_li.kinh_do).join(';')||'',
+          vi_do: loai.vi_tri_dia_li?.map((vi_tri_dia_li)=>vi_tri_dia_li.vi_do).join(';')||'',
+          id_vung_phan_bo: loai.vi_tri_dia_li?.map((vi_tri_dia_li)=>vi_tri_dia_li.id_vung_phan_bo).join(';')||'',
         });
       } else {
         setFormData({
@@ -269,11 +269,11 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditMode ? 'Edit Loai' : 'Add Loai'}
+      title={viewMode ? 'View Loai' : (isEditMode ? 'Edit Loai' : 'Add Loai')}
       className="max-w-2xl"
     >
       {/* Tabs */}
-      {!isEditMode && (
+      {!isEditMode && !viewMode && (
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-6">
           <button
             onClick={() => setActiveTab('form')}
@@ -311,6 +311,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               onChange={handleInputChange}
               error={errors.ten_khoa_hoc}
               placeholder="Enter scientific name"
+              disabled={viewMode}
             />
 
             <Input
@@ -319,6 +320,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.ten_tieng_viet}
               onChange={handleInputChange}
               placeholder="Enter Vietnamese name"
+              disabled={viewMode}
             />
 
             <Input
@@ -327,6 +329,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.ten_goi_khac}
               onChange={handleInputChange}
               placeholder="Enter alternative name"
+              disabled={viewMode}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -335,6 +338,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
                 name="ten_nganh_khoa_hoc"
                 value={formData.ten_nganh_khoa_hoc}
                 onChange={handleInputChange}
+                disabled={viewMode}
               >
                 <option value="">All nganhs</option>
                 {nganhs.map(nganh => (
@@ -350,6 +354,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
                 value={formData.ten_ho_khoa_hoc}
                 onChange={handleInputChange}
                 error={errors.ten_ho_khoa_hoc}
+                disabled={viewMode}
               >
                 <option value="">Select a ho</option>
                 {filteredHos.map(ho => (
@@ -370,6 +375,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.dac_diem_mo_ta}
               onChange={handleInputChange}
               placeholder="Describe the plant's characteristics"
+              disabled={viewMode}
             />
             <Input
               label="Habitat (Dang Song)"
@@ -377,6 +383,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.dang_song}
               onChange={handleInputChange}
               placeholder="Where does it live/grow"
+              disabled={viewMode}
             />
             <Input
               label="Conservation Status (Muc Do Quy Hiem)"
@@ -384,6 +391,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.muc_do_quy_hiem}
               onChange={handleInputChange}
               placeholder="e.g., Endangered, Vulnerable"
+              disabled={viewMode}
             />
             <Input
               label="Seasonal Availability (Tru Luong)"
@@ -391,6 +399,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.tru_luong}
               onChange={handleInputChange}
               placeholder="e.g., Spring, Summer, Year-round"
+              disabled={viewMode}
             />
             <Input
               label="Conservation Methods (Phuong An Bao Ton)"
@@ -398,6 +407,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.phuong_an_bao_ton}
               onChange={handleInputChange}
               placeholder="How to protect and preserve"
+              disabled={viewMode}
             />
           </div>
 
@@ -410,6 +420,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.chi_tiet_ky_thuat}
               onChange={handleInputChange}
               placeholder="Describe growing techniques"
+              disabled={viewMode}
             />
             <Input
               label="Current Development Status (Hien Trang Gay Trong)"
@@ -417,6 +428,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.hien_trang_gay_trong_phat_trien}
               onChange={handleInputChange}
               placeholder="Current cultivation status"
+              disabled={viewMode}
             />
             <Input
               label="Care & Harvesting Techniques (Ky Thuat Cham Soc)"
@@ -424,6 +436,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.ky_thuat_trong_cham_soc_thu_hoach}
               onChange={handleInputChange}
               placeholder="Describe care and harvesting"
+              disabled={viewMode}
             />
           </div>
 
@@ -436,6 +449,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.collection_uri}
               onChange={handleInputChange}
               placeholder="https://example.com/image.jpg"
+              disabled={viewMode}
             />
           </div>
 
@@ -448,6 +462,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.bo_phan_su_dung}
               onChange={handleInputChange}
               placeholder="e.g., Leaves;Roots;Stems"
+              disabled={viewMode}
             />
             <Input
               label="General Uses (Cong Dung)"
@@ -455,6 +470,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.cong_dung}
               onChange={handleInputChange}
               placeholder="e.g., Medicine;Tea;Food"
+              disabled={viewMode}
             />
             <Input
               label="Traditional Medicine (Bai Thuoc)"
@@ -462,6 +478,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.bai_thuoc}
               onChange={handleInputChange}
               placeholder="Traditional remedies"
+              disabled={viewMode}
             />
             <Input
               label="Pharmacological Effects (Tac Dung Duoc Ly)"
@@ -469,6 +486,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.tac_dung_duoc_ly}
               onChange={handleInputChange}
               placeholder="e.g., Anti-inflammatory;Antimicrobial"
+              disabled={viewMode}
             />
           </div>
 
@@ -481,6 +499,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.kinh_do}
               onChange={handleInputChange}
               placeholder="e.g., 106.8;106.9;107.0"
+              disabled={viewMode}
             />
             <Input
               label="Latitude (Vi Do)"
@@ -488,6 +507,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.vi_do}
               onChange={handleInputChange}
               placeholder="e.g., 20.5;20.6;20.7"
+              disabled={viewMode}
             />
             <Input
               label="Region IDs (ID Vung Phan Bo)"
@@ -495,6 +515,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               value={formData.id_vung_phan_bo}
               onChange={handleInputChange}
               placeholder="e.g., 1;2;3"
+              disabled={viewMode}
             />
           </div>
 
@@ -509,14 +530,16 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai }: LoaiFormModa
               onClick={onClose}
               disabled={loading}
             >
-              Cancel
+              {viewMode ? 'Close' : 'Cancel'}
             </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
-            </Button>
+            {!viewMode && (
+              <Button
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
+              </Button>
+            )}
           </div>
         </form>
       )}

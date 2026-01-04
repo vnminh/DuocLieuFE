@@ -8,8 +8,10 @@ export function useUsersView() {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [total, setTotal] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [isViewMode, setIsViewMode] = useState(false);
     const [filters, setFilters] = useState<UserFilters>({
         search: '',
         status: undefined,
@@ -31,6 +33,7 @@ export function useUsersView() {
             const response = await loadUsers(filters);
             setUsers(response.users);
             setTotal(response.total);
+            setTotalPages(response.pages);
         } catch (error) {
             console.error('Error loading users:', error);
             // Show error message to user
@@ -45,11 +48,19 @@ export function useUsersView() {
 
     const handleCreateUser = () => {
         setEditingUser(null);
+        setIsViewMode(false);
         setShowModal(true);
     };
 
     const handleEditUser = (user: User) => {
         setEditingUser(user);
+        setIsViewMode(false);
+        setShowModal(true);
+    };
+
+    const handleViewUser = (user: User) => {
+        setEditingUser(user);
+        setIsViewMode(true);
         setShowModal(true);
     };
 
@@ -77,6 +88,12 @@ export function useUsersView() {
 
     const handleModalSuccess = () => {
         fetchUsers();
+        setEditingUser(null);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setEditingUser(null);
     };
 
     const handleStatusFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -100,7 +117,6 @@ export function useUsersView() {
         return new Date(date).toLocaleDateString();
     };
 
-    const totalPages = Math.ceil(total / (filters.limit || 10));
 
     return {
         handleCreateUser,
@@ -109,10 +125,12 @@ export function useUsersView() {
         getStatusBadge,
         formatDate,
         handleEditUser,
+        handleViewUser,
         handleToggleBlock,
         handleDeleteUser,
         setShowModal,
         handleModalSuccess,
+        handleCloseModal,
         setFilters,
         searchInput,
         filters,
@@ -122,5 +140,6 @@ export function useUsersView() {
         totalPages,
         showModal,
         editingUser,
+        isViewMode,
     }
 }

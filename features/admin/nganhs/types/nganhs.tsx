@@ -5,4 +5,5 @@ export interface NganhFormModalProps {
   onClose: () => void;
   onSuccess: () => void;
   nganh?: Nganh | null;
+  viewMode?: boolean;
 }

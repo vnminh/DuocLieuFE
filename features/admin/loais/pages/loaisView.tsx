@@ -7,7 +7,7 @@ import { Select } from '@/features/common-ui/select';
 import { Badge } from '@/features/common-ui/badge';
 import { LoaiFormModal } from '@/features/admin/loais/component/LoaiFormModal';
 import { useLoaisView } from '../hook/useLoaisView';
-import { Plus, Search, Edit, Trash2, Filter } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Filter, Eye } from 'lucide-react';
 
 export default function LoaisView() {
   const {
@@ -17,6 +17,7 @@ export default function LoaisView() {
     clearFilters,
     formatDate,
     handleEditLoai,
+    handleViewLoai,
     handleDeleteLoai,
     setShowModal,
     handleModalSuccess,
@@ -34,6 +35,7 @@ export default function LoaisView() {
     showModal,
     editingLoai,
     hasActiveFilters,
+    isViewMode,
   } = useLoaisView();
 
   return (
@@ -98,7 +100,7 @@ export default function LoaisView() {
           >
             <option value="">All Regions</option>
             {vungPhanBos.map(vung => (
-              <option key={vung.id} value={vung.ten_dia_phan_hanh_chinh}>
+              <option key={vung.id} value={vung.id}>
                 {vung.ten_dia_phan_hanh_chinh}
               </option>
             ))}
@@ -210,7 +212,7 @@ export default function LoaisView() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Badge variant="success">
-                          {loai.ho?.ten_nganh_khoa_hoc || '-'}
+                          {loai.ho?.nganh?.ten_khoa_hoc || '-'}
                         </Badge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -219,7 +221,15 @@ export default function LoaisView() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                         <Button
                           size="sm"
-                          variant="ghost"
+                          variant="secondary"
+                          onClick={() => handleViewLoai(loai)}
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="primary"
                           onClick={() => handleEditLoai(loai)}
                         >
                           <Edit className="w-4 h-4 mr-1" />
@@ -249,31 +259,96 @@ export default function LoaisView() {
             )}
 
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="px-6 py-3 border-t border-gray-200 flex items-center justify-between">
+            <div className="px-6 py-3 border-t border-gray-200 flex items-center justify-between">
+              <div className="flex items-center space-x-4">
                 <div className="text-sm text-gray-700">
-                  Showing page {filters.page} of {totalPages} ({total} total loais)
+                  Showing {loais.length > 0 ? ((filters.page! - 1) * filters.limit! + 1) : 0} to {Math.min(filters.page! * filters.limit!, total)} of {total} loais
                 </div>
-                <div className="flex space-x-2">
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    disabled={filters.page === 1}
-                    onClick={() => setFilters(prev => ({ ...prev, page: prev.page! - 1 }))}
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm text-gray-700">Rows per page:</label>
+                  <select
+                    value={filters.limit}
+                    onChange={(e) => setFilters(prev => ({ ...prev, limit: Number(e.target.value), page: 1 }))}
+                    className="border border-gray-300 rounded px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    Previous
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    disabled={filters.page === totalPages}
-                    onClick={() => setFilters(prev => ({ ...prev, page: prev.page! + 1 }))}
-                  >
-                    Next
-                  </Button>
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
                 </div>
               </div>
-            )}
+              <div className="flex items-center space-x-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={filters.page === 1}
+                  onClick={() => setFilters(prev => ({ ...prev, page: 1 }))}
+                >
+                  First
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={filters.page === 1}
+                  onClick={() => setFilters(prev => ({ ...prev, page: prev.page! - 1 }))}
+                >
+                  Previous
+                </Button>
+                
+                {/* Page Numbers */}
+                <div className="flex space-x-1">
+                  {(() => {
+                    const currentPage = filters.page!;
+                    const pages = [];
+                    const maxPagesToShow = 5;
+                    
+                    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+                    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+                    
+                    if (endPage - startPage < maxPagesToShow - 1) {
+                      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+                    }
+                    
+                    for (let i = startPage; i <= endPage; i++) {
+                      pages.push(
+                        <button
+                          key={i}
+                          onClick={() => setFilters(prev => ({ ...prev, page: i }))}
+                          className={`px-3 py-1 text-sm rounded ${
+                            i === currentPage
+                              ? 'bg-blue-600 text-white font-medium'
+                              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                          }`}
+                        >
+                          {i}
+                        </button>
+                      );
+                    }
+                    
+                    return pages;
+                  })()}
+                </div>
+
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={filters.page === totalPages}
+                  onClick={() => setFilters(prev => ({ ...prev, page: prev.page! + 1 }))}
+                >
+                  Next
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={filters.page === totalPages}
+                  onClick={() => setFilters(prev => ({ ...prev, page: totalPages }))}
+                >
+                  Last
+                </Button>
+              </div>
+            </div>
           </>
         )}
       </div>
@@ -284,6 +359,7 @@ export default function LoaisView() {
         onClose={() => setShowModal(false)}
         onSuccess={handleModalSuccess}
         loai={editingLoai}
+        viewMode={isViewMode}
       />
     </div>
   );

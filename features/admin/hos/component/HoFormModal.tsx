@@ -12,7 +12,7 @@ import { createHo, updateHo, uploadHosCsv } from '@/lib/api/hos';
 import { loadAllNganhs } from '@/lib/api/nganhs';
 import { HoFormModalProps } from '../types/hos';
 
-export function HoFormModal({ isOpen, onClose, onSuccess, ho }: HoFormModalProps) {
+export function HoFormModal({ isOpen, onClose, onSuccess, ho, viewMode = false }: HoFormModalProps) {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'form' | 'csv'>('form');
   const [nganhs, setNganhs] = useState<Nganh[]>([]);
@@ -24,7 +24,7 @@ export function HoFormModal({ isOpen, onClose, onSuccess, ho }: HoFormModalProps
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const isEditMode = !!ho;
+  const isEditMode = !!ho && !viewMode;
 
   useEffect(() => {
     if (isOpen) {
@@ -135,11 +135,11 @@ export function HoFormModal({ isOpen, onClose, onSuccess, ho }: HoFormModalProps
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditMode ? 'Edit Ho' : 'Add Ho'}
+      title={viewMode ? 'View Ho' : (isEditMode ? 'Edit Ho' : 'Add Ho')}
       className="max-w-2xl"
     >
       {/* Tabs */}
-      {!isEditMode && (
+      {!isEditMode && !viewMode && (
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-6">
           <button
             onClick={() => setActiveTab('form')}
@@ -174,6 +174,7 @@ export function HoFormModal({ isOpen, onClose, onSuccess, ho }: HoFormModalProps
             onChange={handleInputChange}
             error={errors.ten_khoa_hoc}
             placeholder="Enter scientific name"
+            disabled={viewMode}
           />
 
           <Input
@@ -182,6 +183,7 @@ export function HoFormModal({ isOpen, onClose, onSuccess, ho }: HoFormModalProps
             value={formData.ten_tieng_viet}
             onChange={handleInputChange}
             placeholder="Enter Vietnamese name"
+            disabled={viewMode}
           />
 
           <Select
@@ -190,6 +192,7 @@ export function HoFormModal({ isOpen, onClose, onSuccess, ho }: HoFormModalProps
             value={formData.ten_nganh_khoa_hoc}
             onChange={handleInputChange}
             error={errors.ten_nganh_khoa_hoc}
+            disabled={viewMode}
           >
             <option value="">Select a nganh</option>
             {nganhs.map(nganh => (
@@ -208,7 +211,8 @@ export function HoFormModal({ isOpen, onClose, onSuccess, ho }: HoFormModalProps
               value={formData.mo_ta}
               onChange={handleInputChange}
               rows={3}
-              className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={viewMode}
+              className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-100"
               placeholder="Enter description"
             />
           </div>
@@ -224,14 +228,16 @@ export function HoFormModal({ isOpen, onClose, onSuccess, ho }: HoFormModalProps
               onClick={onClose}
               disabled={loading}
             >
-              Cancel
+              {viewMode ? 'Close' : 'Cancel'}
             </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
-            </Button>
+            {!viewMode && (
+              <Button
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
+              </Button>
+            )}
           </div>
         </form>
       )}

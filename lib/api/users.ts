@@ -154,7 +154,7 @@ export async function uploadUsersCsv(file: File): Promise<CSVUploadResponse<User
       status: (row.status as UserStatus) || UserStatus.ACTIVE,
       role: (row.role as UserRole) || UserRole.USER,
     }));
-    
+    console.log(usersData)
     const response = await apiPost<any>('/users/user/many', { data: usersData });
     const createdUsers = Array.isArray(response.data) ? response.data : [];
     

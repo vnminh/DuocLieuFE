@@ -1,18 +1,18 @@
 'use client'
 import { Badge } from "@/features/common-ui/badge";
-import { deleteNganh, loadNganhs } from "@/lib/api/nganhs";
-import { Nganh, NganhFilters } from "@/types/nganhs";
+import { deleteVungPhanBo, loadVungPhanBos } from "@/lib/api/vung-phan-bo";
+import { VungPhanBo, VungPhanBoFilters } from "@/types/vung-phan-bo";
 import { useCallback, useEffect, useState } from "react";
 
-export function useNganhsView() {
-    const [nganhs, setNganhs] = useState<Nganh[]>([]);
+export function useVungPhanBoView() {
+    const [vungPhanBos, setVungPhanBos] = useState<VungPhanBo[]>([]);
     const [loading, setLoading] = useState(true);
     const [total, setTotal] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [showModal, setShowModal] = useState(false);
-    const [editingNganh, setEditingNganh] = useState<Nganh | null>(null);
+    const [editingVungPhanBo, setEditingVungPhanBo] = useState<VungPhanBo | null>(null);
     const [isViewMode, setIsViewMode] = useState(false);
-    const [filters, setFilters] = useState<NganhFilters>({
+    const [filters, setFilters] = useState<VungPhanBoFilters>({
         search: '',
         page: 1,
         limit: 10,
@@ -27,56 +27,56 @@ export function useNganhsView() {
         return () => clearTimeout(timer);
     }, [searchInput]);
 
-    const fetchNganhs = useCallback(async () => {
+    const fetchVungPhanBos = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await loadNganhs(filters);
-            setNganhs(response.nganhs);
+            const response = await loadVungPhanBos(filters);
+            setVungPhanBos(response.vungPhanBos);
             setTotal(response.total);
             setTotalPages(response.pages)
         } catch (error) {
-            console.error('Error loading nganhs:', error);
+            console.error('Error loading vung phan bos:', error);
         } finally {
             setLoading(false);
         }
     }, [filters]);
 
     useEffect(() => {
-        fetchNganhs();
-    }, [fetchNganhs]);
+        fetchVungPhanBos();
+    }, [fetchVungPhanBos]);
 
-    const handleCreateNganh = () => {
-        setEditingNganh(null);
+    const handleCreateVungPhanBo = () => {
+        setEditingVungPhanBo(null);
         setIsViewMode(false);
         setShowModal(true);
     };
 
-    const handleEditNganh = (nganh: Nganh) => {
-        setEditingNganh(nganh);
+    const handleEditVungPhanBo = (vungPhanBo: VungPhanBo) => {
+        setEditingVungPhanBo(vungPhanBo);
         setIsViewMode(false);
         setShowModal(true);
     };
 
-    const handleViewNganh = (nganh: Nganh) => {
-        setEditingNganh(nganh);
+    const handleViewVungPhanBo = (vungPhanBo: VungPhanBo) => {
+        setEditingVungPhanBo(vungPhanBo);
         setIsViewMode(true);
         setShowModal(true);
     };
 
-    const handleDeleteNganh = async (nganhId: number) => {
-        if (window.confirm('Are you sure you want to delete this nganh?')) {
+    const handleDeleteVungPhanBo = async (vungPhanBoId: number) => {
+        if (window.confirm('Are you sure you want to delete this vung phan bo?')) {
             try {
-                await deleteNganh(nganhId);
-                fetchNganhs();
+                await deleteVungPhanBo(vungPhanBoId);
+                fetchVungPhanBos();
             } catch (error) {
-                console.error('Error deleting nganh:', error);
-                alert('Failed to delete nganh');
+                console.error('Error deleting vung phan bo:', error);
+                alert('Failed to delete vung phan bo');
             }
         }
     };
 
     const handleModalSuccess = () => {
-        fetchNganhs();
+        fetchVungPhanBos();
     };
 
     const formatDate = (date: Date) => {
@@ -85,12 +85,12 @@ export function useNganhsView() {
 
 
     return {
-        handleCreateNganh,
+        handleCreateVungPhanBo,
         setSearchInput,
         formatDate,
-        handleEditNganh,
-        handleViewNganh,
-        handleDeleteNganh,
+        handleEditVungPhanBo,
+        handleViewVungPhanBo,
+        handleDeleteVungPhanBo,
         setShowModal,
         handleModalSuccess,
         setFilters,
@@ -98,10 +98,10 @@ export function useNganhsView() {
         filters,
         total,
         loading,
-        nganhs,
+        vungPhanBos,
         totalPages,
         showModal,
-        editingNganh,
+        editingVungPhanBo,
         isViewMode,
     }
 }

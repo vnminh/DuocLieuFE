@@ -22,6 +22,7 @@ export function Select({ label, error, className, children, value, ...props }: S
           className,
           value?'text-gray-700':'text-gray-400'
         )}
+        value={value}
         {...props}
       >
         {children}

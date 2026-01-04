@@ -52,6 +52,7 @@ export async function apiPost<T = any>(
   body?: any,
   options?: RequestInit
 ): Promise<T> {
+  console.log(body ? JSON.stringify(body) : undefined)
   const url = `${BASE_URL}${endpoint}`;
   const response = await fetch(url, {
     method: 'POST',

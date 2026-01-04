@@ -5,41 +5,38 @@ import { Modal } from '@/features/common-ui/modal';
 import { Button } from '@/features/common-ui/button';
 import { Input } from '@/features/common-ui/input';
 import { CsvUpload } from '@/features/common-ui/csv-upload';
-import { Nganh, CreateNganhData, UpdateNganhData } from '@/types/nganhs';
-import { createNganh, updateNganh, uploadNganhsCsv } from '@/lib/api/nganhs';
-import { NganhFormModalProps } from '../types/nganhs';
+import { VungPhanBo, CreateVungPhanBoData, UpdateVungPhanBoData } from '@/types/vung-phan-bo';
+import { createVungPhanBo, updateVungPhanBo, uploadVungPhanBosCsv } from '@/lib/api/vung-phan-bo';
+import { VungPhanBoFormModalProps } from '../types/vung-phan-bo';
 
-export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = false }: NganhFormModalProps) {
+export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, viewMode = false }: VungPhanBoFormModalProps) {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'form' | 'csv'>('form');
   const [formData, setFormData] = useState({
-    ten_khoa_hoc: '',
-    ten_tieng_viet: '',
-    mo_ta: ''
+    ten_dia_phan_hanh_chinh: '',
+    danh_sach_diem_bien: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const isEditMode = !!nganh && !viewMode;
+  const isEditMode = !!vungPhanBo && !viewMode;
 
   useEffect(() => {
     if (isOpen) {
-      if (nganh) {
+      if (vungPhanBo) {
         setFormData({
-          ten_khoa_hoc: nganh.ten_khoa_hoc || '',
-          ten_tieng_viet: nganh.ten_tieng_viet || '',
-          mo_ta: nganh.mo_ta || ''
+          ten_dia_phan_hanh_chinh: vungPhanBo.ten_dia_phan_hanh_chinh || '',
+          danh_sach_diem_bien: vungPhanBo.danh_sach_diem_bien || ''
         });
       } else {
         setFormData({
-          ten_khoa_hoc: '',
-          ten_tieng_viet: '',
-          mo_ta: ''
+          ten_dia_phan_hanh_chinh: '',
+          danh_sach_diem_bien: ''
         });
       }
       setErrors({});
       setActiveTab('form');
     }
-  }, [isOpen, nganh]);
+  }, [isOpen, vungPhanBo]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -59,8 +56,8 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.ten_khoa_hoc.trim()) {
-      newErrors.ten_khoa_hoc = 'Scientific name is required';
+    if (!formData.ten_dia_phan_hanh_chinh.trim()) {
+      newErrors.ten_dia_phan_hanh_chinh = 'Administrative region name is required';
     }
 
     setErrors(newErrors);
@@ -78,49 +75,47 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
 
     try {
       const submitData = {
-        ten_khoa_hoc: formData.ten_khoa_hoc.trim(),
-        ten_tieng_viet: formData.ten_tieng_viet.trim() || undefined,
-        mo_ta: formData.mo_ta.trim() || undefined
+        ten_dia_phan_hanh_chinh: formData.ten_dia_phan_hanh_chinh.trim(),
+        danh_sach_diem_bien: formData.danh_sach_diem_bien.trim() || undefined
       };
 
-      if (isEditMode && nganh) {
-        const updateData: UpdateNganhData = { ...submitData };
-        await updateNganh(nganh.id, updateData);
+      if (isEditMode && vungPhanBo) {
+        const updateData: UpdateVungPhanBoData = { ...submitData };
+        await updateVungPhanBo(vungPhanBo.id, updateData);
       } else {
-        const createData: CreateNganhData = { ...submitData };
-        await createNganh(createData);
+        const createData: CreateVungPhanBoData = { ...submitData };
+        await createVungPhanBo(createData);
       }
 
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error saving nganh:', error);
-      setErrors({ submit: 'Failed to save nganh. Please try again.' });
+      console.error('Error saving vung phan bo:', error);
+      setErrors({ submit: 'Failed to save vung phan bo. Please try again.' });
     } finally {
       setLoading(false);
     }
   };
 
   const handleCsvUpload = async (file: File) => {
-    const result = await uploadNganhsCsv(file);
+    const result = await uploadVungPhanBosCsv(file);
     if (result.success > 0) {
       onSuccess();
     }
     return result;
   };
 
-  const csvColumns = ['ten_khoa_hoc', 'ten_tieng_viet', 'mo_ta'];
+  const csvColumns = ['ten_dia_phan_hanh_chinh', 'danh_sach_diem_bien'];
   const sampleCsvData = {
-    ten_khoa_hoc: 'Plantae',
-    ten_tieng_viet: 'Thực vật',
-    mo_ta: 'Mô tả ngành thực vật'
+    ten_dia_phan_hanh_chinh: 'Hà Nội',
+    danh_sach_diem_bien: 'Điểm 1, Điểm 2, Điểm 3'
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={viewMode ? 'View Nganh' : (isEditMode ? 'Edit Nganh' : 'Add Nganh')}
+      title={viewMode ? 'View Vùng Phân Bố' : (isEditMode ? 'Edit Vùng Phân Bố' : 'Add Vùng Phân Bố')}
       className="max-w-2xl"
     >
       {/* Tabs */}
@@ -149,40 +144,31 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
         </div>
       )}
 
-      {/* Form Tab */}
-      {activeTab === 'form' && (
+      {activeTab === 'form' ? (
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Scientific Name (Ten Khoa Hoc) *"
-            name="ten_khoa_hoc"
-            value={formData.ten_khoa_hoc}
+            label="Administrative Region Name"
+            name="ten_dia_phan_hanh_chinh"
+            value={formData.ten_dia_phan_hanh_chinh}
             onChange={handleInputChange}
-            error={errors.ten_khoa_hoc}
-            placeholder="Enter scientific name"
+            placeholder="Enter administrative region name"
+            required
             disabled={viewMode}
+            error={errors.ten_dia_phan_hanh_chinh}
           />
 
-          <Input
-            label="Vietnamese Name (Ten Tieng Viet)"
-            name="ten_tieng_viet"
-            value={formData.ten_tieng_viet}
-            onChange={handleInputChange}
-            placeholder="Enter Vietnamese name"
-            disabled={viewMode}
-          />
-
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">
-              Description (Mo Ta)
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Boundary Points List
             </label>
             <textarea
-              name="mo_ta"
-              value={formData.mo_ta}
+              name="danh_sach_diem_bien"
+              value={formData.danh_sach_diem_bien}
               onChange={handleInputChange}
-              rows={3}
+              placeholder="Enter boundary points (optional)"
+              rows={4}
               disabled={viewMode}
-              className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-100"
-              placeholder="Enter description"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -200,34 +186,18 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
               {viewMode ? 'Close' : 'Cancel'}
             </Button>
             {!viewMode && (
-              <Button
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
+              <Button type="submit" disabled={loading}>
+                {loading ? 'Saving...' : isEditMode ? 'Update' : 'Create'}
               </Button>
             )}
           </div>
         </form>
-      )}
-
-      {/* CSV Upload Tab */}
-      {activeTab === 'csv' && (
-        <div>
-          <CsvUpload
-            onUpload={handleCsvUpload}
-            acceptedColumns={csvColumns}
-            sampleData={sampleCsvData}
-          />
-          <div className="flex justify-end pt-4">
-            <Button
-              variant="secondary"
-              onClick={onClose}
-            >
-              Close
-            </Button>
-          </div>
-        </div>
+      ) : (
+        <CsvUpload
+          onUpload={handleCsvUpload}
+          acceptedColumns={csvColumns}
+          sampleData={sampleCsvData}
+        />
       )}
     </Modal>
   );

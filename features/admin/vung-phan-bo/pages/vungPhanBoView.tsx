@@ -3,21 +3,19 @@
 import React from 'react';
 import { Button } from '@/features/common-ui/button';
 import { Input } from '@/features/common-ui/input';
-import { Select } from '@/features/common-ui/select';
 import { Badge } from '@/features/common-ui/badge';
-import { HoFormModal } from '@/features/admin/hos/component/HoFormModal';
-import { useHosView } from '../hook/useHosView';
+import { VungPhanBoFormModal } from '@/features/admin/vung-phan-bo/component/VungPhanBoFormModal';
+import { useVungPhanBoView } from '../hook/useVungPhanBoView';
 import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
 
-export default function HosView() {
+export default function VungPhanBoView() {
   const {
-    handleCreateHo,
+    handleCreateVungPhanBo,
     setSearchInput,
-    handleNganhFilterChange,
     formatDate,
-    handleEditHo,
-    handleViewHo,
-    handleDeleteHo,
+    handleEditVungPhanBo,
+    handleViewVungPhanBo,
+    handleDeleteVungPhanBo,
     setShowModal,
     handleModalSuccess,
     setFilters,
@@ -25,58 +23,44 @@ export default function HosView() {
     filters,
     total,
     loading,
-    hos,
-    nganhs,
+    vungPhanBos,
     totalPages,
     showModal,
-    editingHo,
+    editingVungPhanBo,
     isViewMode,
-  } = useHosView();
+  } = useVungPhanBoView();
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Ho Management</h1>
-          <p className="text-gray-600 mt-1">Manage taxonomic families (hos)</p>
+          <h1 className="text-3xl font-bold text-gray-900">Vùng Phân Bố Management</h1>
+          <p className="text-gray-600 mt-1">Manage distribution regions</p>
         </div>
-        <Button onClick={handleCreateHo}>
+        <Button onClick={handleCreateVungPhanBo}>
           <Plus className="w-4 h-4 mr-2" />
-          Add Ho
+          Add Vùng Phân Bố
         </Button>
       </div>
 
       {/* Filters */}
       <div className="bg-white p-4 rounded-lg shadow-sm border">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <Input
-              label="Search by Scientific Name"
+              label="Search by Administrative Region"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search ten khoa hoc"
+              placeholder="Search ten_dia_phan_hanh_chinh..."
             >
-              <Search className="text-gray-400 ml-2" />
+              <Search className='text-gray-400 ml-2'/>
             </Input>
           </div>
-          
-          <Select
-            label="Filter by Nganh"
-            value={filters.ten_nganh_khoa_hoc || ''}
-            onChange={handleNganhFilterChange}
-          >
-            <option value="">All Nganhs</option>
-            {nganhs.map(nganh => (
-              <option key={nganh.ten_khoa_hoc} value={nganh.ten_khoa_hoc}>
-                {nganh.ten_khoa_hoc}
-              </option>
-            ))}
-          </Select>
 
           <div className="flex items-end col-start-1">
             <div className="text-sm text-gray-600">
-              Total: {total} hos
+              Total: {total} distribution regions
             </div>
           </div>
         </div>
@@ -87,7 +71,7 @@ export default function HosView() {
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading hos...</p>
+            <p className="mt-2 text-gray-600">Loading distribution regions...</p>
           </div>
         ) : (
           <>
@@ -96,19 +80,16 @@ export default function HosView() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Scientific Name
+                      ID
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Vietnamese Name
+                      Administrative Region
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Nganh
+                      Boundary Points
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Description
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Loais Count
+                      Locations Count
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Created At
@@ -119,41 +100,36 @@ export default function HosView() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {hos.map((ho) => (
-                    <tr key={ho.id} className="hover:bg-gray-50">
+                  {vungPhanBos.map((vungPhanBo) => (
+                    <tr key={vungPhanBo.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {ho.ten_khoa_hoc}
+                          {vungPhanBo.id}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {ho.ten_tieng_viet || '-'}
+                        <div className="text-sm font-medium text-gray-900">
+                          {vungPhanBo.ten_dia_phan_hanh_chinh}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-900 max-w-xs truncate">
+                          {vungPhanBo.danh_sach_diem_bien || '-'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Badge variant="info">
-                          {ho.ten_nganh_khoa_hoc}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 max-w-xs truncate">
-                          {ho.mo_ta || '-'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge variant="success">
-                          {ho.loais?.length || 0} loais
+                          {vungPhanBo.vi_tri_dia_li_count || 0} locations
                         </Badge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatDate(ho.created_at)}
+                        {formatDate(vungPhanBo.created_at)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                         <Button
                           size="sm"
                           variant="secondary"
-                          onClick={() => handleViewHo(ho)}
+                          onClick={() => handleViewVungPhanBo(vungPhanBo)}
                         >
                           <Eye className="w-4 h-4 mr-1" />
                           View
@@ -161,7 +137,7 @@ export default function HosView() {
                         <Button
                           size="sm"
                           variant="primary"
-                          onClick={() => handleEditHo(ho)}
+                          onClick={() => handleEditVungPhanBo(vungPhanBo)}
                         >
                           <Edit className="w-4 h-4 mr-1" />
                           Edit
@@ -169,7 +145,7 @@ export default function HosView() {
                         <Button
                           size="sm"
                           variant="danger"
-                          onClick={() => handleDeleteHo(ho.id)}
+                          onClick={() => handleDeleteVungPhanBo(vungPhanBo.id)}
                         >
                           <Trash2 className="w-4 h-4 mr-1" />
                           Delete
@@ -181,9 +157,9 @@ export default function HosView() {
               </table>
             </div>
 
-            {hos.length === 0 && (
+            {vungPhanBos.length === 0 && (
               <div className="p-8 text-center">
-                <p className="text-gray-600">No hos found</p>
+                <p className="text-gray-600">No distribution regions found</p>
               </div>
             )}
 
@@ -191,7 +167,7 @@ export default function HosView() {
             <div className="px-6 py-3 border-t border-gray-200 flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="text-sm text-gray-700">
-                  Showing {hos.length > 0 ? ((filters.page! - 1) * filters.limit! + 1) : 0} to {Math.min(filters.page! * filters.limit!, total)} of {total} hos
+                  Showing {vungPhanBos.length > 0 ? ((filters.page! - 1) * filters.limit! + 1) : 0} to {Math.min(filters.page! * filters.limit!, total)} of {total} regions
                 </div>
                 <div className="flex items-center space-x-2">
                   <label className="text-sm text-gray-700">Rows per page:</label>
@@ -282,12 +258,12 @@ export default function HosView() {
         )}
       </div>
 
-      {/* Ho Form Modal */}
-      <HoFormModal
+      {/* VungPhanBo Form Modal */}
+      <VungPhanBoFormModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         onSuccess={handleModalSuccess}
-        ho={editingHo}
+        vungPhanBo={editingVungPhanBo}
         viewMode={isViewMode}
       />
     </div>

@@ -5,4 +5,5 @@ export interface UserFormModalProps {
   onClose: () => void;
   onSuccess: () => void;
   user?: User | null;
+  viewMode?: boolean;
 }

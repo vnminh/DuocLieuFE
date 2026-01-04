@@ -5,4 +5,5 @@ export interface LoaiFormModalProps {
   onClose: () => void;
   onSuccess: () => void;
   loai?: Loai | null;
+  viewMode?: boolean;
 }
