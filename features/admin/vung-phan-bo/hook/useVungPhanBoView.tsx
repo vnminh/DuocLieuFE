@@ -33,7 +33,7 @@ export function useVungPhanBoView() {
             const response = await loadVungPhanBos(filters);
             setVungPhanBos(response.vungPhanBos);
             setTotal(response.total);
-            setTotalPages(response.pages)
+            if (response.pages) setTotalPages(response.pages)
         } catch (error) {
             console.error('Error loading vung phan bos:', error);
         } finally {

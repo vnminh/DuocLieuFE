@@ -42,6 +42,15 @@ export async function getLoaiByName(tenKhoaHoc: string): Promise<Loai> {
 }
 
 /**
+ * Get Loai with all related data (ho, nganh, dac_diem_sinh_hoc, etc.)
+ * Endpoint: GET /loais/:id/detail
+ */
+export async function getLoaiDetail(id: number): Promise<Loai> {
+  const response = await apiGet<Loai>(`/loais/${id}/detail`);
+  return response;
+}
+
+/**
  * Create a single Loài
  * Endpoint: POST /loais
  */

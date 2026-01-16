@@ -7,6 +7,7 @@ export interface Nganh {
   created_at: Date;
   updated_at: Date;
   hos?: any[]; // Avoid circular import with Ho[]
+  hos_count?: number
 }
 
 export interface CreateNganhData {

@@ -14,6 +14,7 @@ import {
   FileText,
   Settings,
   MapPin,
+  Map,
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -52,6 +53,11 @@ const sidebarItems: SidebarItem[] = [
     name: 'Vùng Phân Bố',
     href: '/admin/vung-phan-bo',
     icon: <MapPin className="w-5 h-5" />,
+  },
+  {
+    name: 'Loai Map',
+    href: '/admin/loai-map',
+    icon: <Map className="w-5 h-5" />,
   },
   {
     name: 'Settings',

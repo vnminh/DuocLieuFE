@@ -33,7 +33,7 @@ export function useNganhsView() {
             const response = await loadNganhs(filters);
             setNganhs(response.nganhs);
             setTotal(response.total);
-            setTotalPages(response.pages)
+            if (response.pages) setTotalPages(response.pages)
         } catch (error) {
             console.error('Error loading nganhs:', error);
         } finally {

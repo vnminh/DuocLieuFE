@@ -41,7 +41,7 @@ export function useHosView() {
             const response = await loadHos(filters);
             setHos(response.hos);
             setTotal(response.total);
-            setTotalPages(response.pages);
+            if (response.pages) setTotalPages(response.pages);
         } catch (error) {
             console.error('Error loading hos:', error);
         } finally {

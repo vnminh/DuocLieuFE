@@ -39,6 +39,34 @@ export async function getVungPhanBoByName(tenDiaPhanHanhChinh: string): Promise<
 }
 
 /**
+ * Get VungPhanBo with all related data (loais with coordinates)
+ * Endpoint: GET /vung-phan-bo/:id/detail
+ */
+export interface VungPhanBoLoai {
+  id: number;
+  ten_khoa_hoc: string;
+  ten_tieng_viet: string | null;
+  ten_goi_khac: string | null;
+  muc_do_quy_hiem: string | null;
+  coordinates: {
+    id: number;
+    kinh_do: number;
+    vi_do: number;
+  }[];
+}
+
+export interface VungPhanBoDetail extends VungPhanBo {
+  loais: VungPhanBoLoai[];
+  loais_count: number;
+  vi_tri_dia_li_count: number;
+}
+
+export async function getVungPhanBoDetail(id: number): Promise<VungPhanBoDetail> {
+  const response = await apiGet<VungPhanBoDetail>(`/vung-phan-bo/${id}/detail`);
+  return response;
+}
+
+/**
  * Create a single VungPhanBo
  * Endpoint: POST /vung-phan-bo
  */

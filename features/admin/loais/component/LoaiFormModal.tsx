@@ -41,7 +41,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
     tac_dung_duoc_ly: '',
     kinh_do: '',
     vi_do: '',
-    id_vung_phan_bo: ''
+    id_vung_phan_bo: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 

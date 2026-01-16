@@ -57,6 +57,29 @@ export async function getHoByName(tenKhoaHoc: string): Promise<Ho> {
 }
 
 /**
+ * Get Ho with all related data (nganh and loais with vi_tri_dia_li count)
+ * Endpoint: GET /hos/:id/detail
+ */
+export interface HoDetail extends Ho {
+  loais: {
+    id: number;
+    ten_khoa_hoc: string;
+    ten_tieng_viet: string | null;
+    ten_goi_khac: string | null;
+    dac_diem_sinh_hoc?: {
+      muc_do_quy_hiem: string;
+    };
+    vi_tri_dia_li_count: number;
+  }[];
+  loais_count: number;
+}
+
+export async function getHoDetail(id: number): Promise<HoDetail> {
+  const response = await apiGet<HoDetail>(`/hos/${id}/detail`);
+  return response;
+}
+
+/**
  * Create a single Họ
  * Endpoint: POST /hos
  */

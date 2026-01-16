@@ -8,9 +8,19 @@ import { Select } from '@/features/common-ui/select';
 import { CsvUpload } from '@/features/common-ui/csv-upload';
 import { Ho, CreateHoData, UpdateHoData } from '@/types/hos';
 import { Nganh } from '@/types/nganhs';
-import { createHo, updateHo, uploadHosCsv } from '@/lib/api/hos';
+import { createHo, updateHo, uploadHosCsv, getHoDetail, HoDetail } from '@/lib/api/hos';
 import { loadAllNganhs } from '@/lib/api/nganhs';
 import { HoFormModalProps } from '../types/hos';
+
+// Rarity color mapping
+const RARITY_COLORS: Record<string, string> = {
+  'KHÔNG RÕ': 'bg-gray-100 text-gray-700',
+  'PHỔ BIẾN': 'bg-green-100 text-green-700',
+  'THƯỜNG GẶP': 'bg-blue-100 text-blue-700',
+  'HIẾM': 'bg-yellow-100 text-yellow-700',
+  'RẤT HIẾM': 'bg-orange-100 text-orange-700',
+  'CỰC HIẾM': 'bg-red-100 text-red-700',
+};
 
 export function HoFormModal({ isOpen, onClose, onSuccess, ho, viewMode = false }: HoFormModalProps) {
   const [loading, setLoading] = useState(false);
@@ -23,6 +33,8 @@ export function HoFormModal({ isOpen, onClose, onSuccess, ho, viewMode = false }
     ten_nganh_khoa_hoc: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [detailData, setDetailData] = useState<HoDetail | null>(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
 
   const isEditMode = !!ho && !viewMode;
 
@@ -37,6 +49,15 @@ export function HoFormModal({ isOpen, onClose, onSuccess, ho, viewMode = false }
           mo_ta: ho.mo_ta || '',
           ten_nganh_khoa_hoc: ho.ten_nganh_khoa_hoc || ''
         });
+        
+        // Fetch detail data when viewing
+        if (viewMode) {
+          setLoadingDetail(true);
+          getHoDetail(ho.id)
+            .then(detail => setDetailData(detail))
+            .catch(console.error)
+            .finally(() => setLoadingDetail(false));
+        }
       } else {
         setFormData({
           ten_khoa_hoc: '',
@@ -44,11 +65,12 @@ export function HoFormModal({ isOpen, onClose, onSuccess, ho, viewMode = false }
           mo_ta: '',
           ten_nganh_khoa_hoc: ''
         });
+        setDetailData(null);
       }
       setErrors({});
       setActiveTab('form');
     }
-  }, [isOpen, ho]);
+  }, [isOpen, ho, viewMode]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -216,6 +238,66 @@ export function HoFormModal({ isOpen, onClose, onSuccess, ho, viewMode = false }
               placeholder="Enter description"
             />
           </div>
+
+          {/* Related Loais Section - Only in view mode */}
+          {viewMode && (
+            <div className="space-y-3 pt-4 border-t border-gray-200">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-gray-800">
+                  Related Species (Loài)
+                </h3>
+                {detailData && (
+                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                    {detailData.loais_count} species
+                  </span>
+                )}
+              </div>
+              
+              {loadingDetail ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                  <span className="ml-2 text-sm text-gray-500">Loading related data...</span>
+                </div>
+              ) : detailData?.loais && detailData.loais.length > 0 ? (
+                <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-md">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50 sticky top-0">
+                      <tr>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Scientific Name</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Vietnamese Name</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Rarity</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Locations</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {detailData.loais.map((loai) => (
+                        <tr key={loai.id} className="hover:bg-gray-50">
+                          <td className="px-3 py-2 text-sm text-gray-900 font-medium">{loai.ten_khoa_hoc}</td>
+                          <td className="px-3 py-2 text-sm text-gray-600">{loai.ten_tieng_viet || '-'}</td>
+                          <td className="px-3 py-2 text-sm">
+                            {loai.dac_diem_sinh_hoc?.muc_do_quy_hiem ? (
+                              <span className={`px-2 py-0.5 rounded-full text-xs ${RARITY_COLORS[loai.dac_diem_sinh_hoc.muc_do_quy_hiem] || 'bg-gray-100 text-gray-700'}`}>
+                                {loai.dac_diem_sinh_hoc.muc_do_quy_hiem}
+                              </span>
+                            ) : (
+                              <span className="text-gray-400">-</span>
+                            )}
+                          </td>
+                          <td className="px-3 py-2 text-sm">
+                            <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs">
+                              {loai.vi_tri_dia_li_count} locations
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500 italic py-2">No related species found.</p>
+              )}
+            </div>
+          )}
 
           {errors.submit && (
             <div className="text-red-600 text-sm">{errors.submit}</div>

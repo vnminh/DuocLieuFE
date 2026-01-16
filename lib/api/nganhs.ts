@@ -32,6 +32,26 @@ export async function getNganhById(id: number): Promise<Nganh> {
   return response.data || response;
 }
 
+/**
+ * Get Nganh with all related data (hos with loais count)
+ * Endpoint: GET /nganhs/:id/detail
+ */
+export interface NganhDetail extends Nganh {
+  hos: {
+    id: number;
+    ten_khoa_hoc: string;
+    ten_tieng_viet: string | null;
+    mo_ta: string | null;
+    loais_count: number;
+  }[];
+  hos_count: number;
+}
+
+export async function getNganhDetail(id: number): Promise<NganhDetail> {
+  const response = await apiGet<NganhDetail>(`/nganhs/${id}/detail`);
+  return response;
+}
+
 export async function getNganhByName(tenKhoaHoc: string): Promise<Nganh> {
   const response = await apiGet<any>(`/nganhs/${tenKhoaHoc}`);
   return response.data || response;

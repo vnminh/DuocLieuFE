@@ -33,7 +33,7 @@ export function useUsersView() {
             const response = await loadUsers(filters);
             setUsers(response.users);
             setTotal(response.total);
-            setTotalPages(response.pages);
+            if (response.pages) setTotalPages(response.pages);
         } catch (error) {
             console.error('Error loading users:', error);
             // Show error message to user

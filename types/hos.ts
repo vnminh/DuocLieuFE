@@ -9,6 +9,7 @@ export interface Ho {
   updated_at: Date;
   nganh?: any; // Avoid circular import with Nganh
   loais?: any[]; // Avoid circular import with Loai[]
+  loais_count?: number
 }
 
 export interface CreateHoData {

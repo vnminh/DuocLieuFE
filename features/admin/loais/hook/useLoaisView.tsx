@@ -18,6 +18,7 @@ export function useLoaisView() {
     const [showModal, setShowModal] = useState(false);
     const [editingLoai, setEditingLoai] = useState<Loai | null>(null);
     const [isViewMode, setIsViewMode] = useState(false);
+    const [displayMode, setDisplayMode] = useState<'list' | 'card'>('list');
     const [hos, setHos] = useState<Ho[]>([]);
     const [nganhs, setNganhs] = useState<Nganh[]>([]);
     const [vungPhanBos, setVungPhanBos] = useState<VungPhanBo[]>([]);
@@ -77,7 +78,7 @@ export function useLoaisView() {
             const response = await loadLoais(filters);
             setLoais(response.loais);
             setTotal(response.total);
-            setTotalPages(response.pages);
+            if (response.pages) setTotalPages(response.pages);
         } catch (error) {
             console.error('Error loading loais:', error);
         } finally {
@@ -176,5 +177,7 @@ export function useLoaisView() {
         editingLoai,
         hasActiveFilters,
         isViewMode,
+        displayMode,
+        setDisplayMode,
     }
 }

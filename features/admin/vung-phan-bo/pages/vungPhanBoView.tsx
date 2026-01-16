@@ -4,6 +4,7 @@ import React from 'react';
 import { Button } from '@/features/common-ui/button';
 import { Input } from '@/features/common-ui/input';
 import { Badge } from '@/features/common-ui/badge';
+import { Pagination } from '@/features/common-ui/pagination';
 import { VungPhanBoFormModal } from '@/features/admin/vung-phan-bo/component/VungPhanBoFormModal';
 import { useVungPhanBoView } from '../hook/useVungPhanBoView';
 import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
@@ -164,96 +165,16 @@ export default function VungPhanBoView() {
             )}
 
             {/* Pagination */}
-            <div className="px-6 py-3 border-t border-gray-200 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="text-sm text-gray-700">
-                  Showing {vungPhanBos.length > 0 ? ((filters.page! - 1) * filters.limit! + 1) : 0} to {Math.min(filters.page! * filters.limit!, total)} of {total} regions
-                </div>
-                <div className="flex items-center space-x-2">
-                  <label className="text-sm text-gray-700">Rows per page:</label>
-                  <select
-                    value={filters.limit}
-                    onChange={(e) => setFilters(prev => ({ ...prev, limit: Number(e.target.value), page: 1 }))}
-                    className="border border-gray-300 rounded px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={filters.page === 1}
-                  onClick={() => setFilters(prev => ({ ...prev, page: 1 }))}
-                >
-                  First
-                </Button>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={filters.page === 1}
-                  onClick={() => setFilters(prev => ({ ...prev, page: prev.page! - 1 }))}
-                >
-                  Previous
-                </Button>
-                
-                {/* Page Numbers */}
-                <div className="flex space-x-1">
-                  {(() => {
-                    const currentPage = filters.page!;
-                    const pages = [];
-                    const maxPagesToShow = 5;
-                    
-                    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-                    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-                    
-                    if (endPage - startPage < maxPagesToShow - 1) {
-                      startPage = Math.max(1, endPage - maxPagesToShow + 1);
-                    }
-                    
-                    for (let i = startPage; i <= endPage; i++) {
-                      pages.push(
-                        <button
-                          key={i}
-                          onClick={() => setFilters(prev => ({ ...prev, page: i }))}
-                          className={`px-3 py-1 text-sm rounded ${
-                            i === currentPage
-                              ? 'bg-blue-600 text-white font-medium'
-                              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
-                          }`}
-                        >
-                          {i}
-                        </button>
-                      );
-                    }
-                    
-                    return pages;
-                  })()}
-                </div>
-
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={filters.page === totalPages}
-                  onClick={() => setFilters(prev => ({ ...prev, page: prev.page! + 1 }))}
-                >
-                  Next
-                </Button>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={filters.page === totalPages}
-                  onClick={() => setFilters(prev => ({ ...prev, page: totalPages }))}
-                >
-                  Last
-                </Button>
-              </div>
-            </div>
+            <Pagination
+              currentPage={filters.page!}
+              totalPages={totalPages}
+              totalItems={total}
+              itemsPerPage={filters.limit!}
+              itemsCount={vungPhanBos.length}
+              itemName="regions"
+              onPageChange={(page) => setFilters(prev => ({ ...prev, page }))}
+              onLimitChange={(limit) => setFilters(prev => ({ ...prev, limit, page: 1 }))}
+            />
           </>
         )}
       </div>

@@ -5,9 +5,11 @@ import { Button } from '@/features/common-ui/button';
 import { Input } from '@/features/common-ui/input';
 import { Select } from '@/features/common-ui/select';
 import { Badge } from '@/features/common-ui/badge';
+import { Pagination } from '@/features/common-ui/pagination';
 import { LoaiFormModal } from '@/features/admin/loais/component/LoaiFormModal';
+import { LoaiCard } from '@/features/admin/loais/component/LoaiCard';
 import { useLoaisView } from '../hook/useLoaisView';
-import { Plus, Search, Edit, Trash2, Filter, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Filter, Eye, List, LayoutGrid } from 'lucide-react';
 
 export default function LoaisView() {
   const {
@@ -27,7 +29,6 @@ export default function LoaisView() {
     total,
     loading,
     loais,
-    hos,
     nganhs,
     vungPhanBos,
     filteredHos,
@@ -36,6 +37,8 @@ export default function LoaisView() {
     editingLoai,
     hasActiveFilters,
     isViewMode,
+    displayMode,
+    setDisplayMode,
   } = useLoaisView();
 
   return (
@@ -46,10 +49,37 @@ export default function LoaisView() {
           <h1 className="text-3xl font-bold text-gray-900">Loai Management</h1>
           <p className="text-gray-600 mt-1">Manage taxonomic species (loais)</p>
         </div>
-        <Button onClick={handleCreateLoai}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Loai
-        </Button>
+        <div className="flex items-center space-x-3">
+          {/* View Mode Toggle */}
+          <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setDisplayMode('list')}
+              className={`p-2 rounded-md transition-colors ${
+                displayMode === 'list'
+                  ? 'bg-white shadow-sm text-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+              title="List View"
+            >
+              <List className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setDisplayMode('card')}
+              className={`p-2 rounded-md transition-colors ${
+                displayMode === 'card'
+                  ? 'bg-white shadow-sm text-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+              title="Card View"
+            >
+              <LayoutGrid className="w-5 h-5" />
+            </button>
+          </div>
+          <Button onClick={handleCreateLoai}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Loai
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -66,7 +96,7 @@ export default function LoaisView() {
             </Input>
 
           </div>
-          
+
           <Select
             label="Filter by Nganh"
             value={filters.ten_nganh_khoa_hoc || ''}
@@ -118,7 +148,7 @@ export default function LoaisView() {
             </Button>
           </div>
         </div>
-        
+
         <div className="mt-3 flex items-center justify-between">
           <div className="text-sm text-gray-600">
             Total: {total} loais
@@ -151,17 +181,39 @@ export default function LoaisView() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white shadow-sm border rounded-lg overflow-hidden">
-        {loading ? (
-          <div className="p-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading loais...</p>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+      {/* Content - List or Card View */}
+      {loading ? (
+        <div className="bg-white shadow-sm border rounded-lg p-8 text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading loais...</p>
+        </div>
+      ) : loais.length === 0 ? (
+        <div className="bg-white shadow-sm border rounded-lg p-8 text-center">
+          <p className="text-gray-600">
+            {hasActiveFilters ? 'No loais found matching your filters' : 'No loais found'}
+          </p>
+        </div>
+      ) : (
+        <>
+          {displayMode === 'card' ? (
+            /* Card View */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {loais.map((loai) => (
+                <LoaiCard
+                  key={loai.id}
+                  loai={loai}
+                  onView={handleViewLoai}
+                  onEdit={handleEditLoai}
+                  onDelete={handleDeleteLoai}
+                  formatDate={formatDate}
+                />
+              ))}
+            </div>
+          ) : (
+            /* List View (Table) */
+            <div className="bg-white shadow-sm border rounded-lg overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -249,109 +301,24 @@ export default function LoaisView() {
                 </tbody>
               </table>
             </div>
+          </div>
+          )}
 
-            {loais.length === 0 && (
-              <div className="p-8 text-center">
-                <p className="text-gray-600">
-                  {hasActiveFilters ? 'No loais found matching your filters' : 'No loais found'}
-                </p>
-              </div>
-            )}
-
-            {/* Pagination */}
-            <div className="px-6 py-3 border-t border-gray-200 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="text-sm text-gray-700">
-                  Showing {loais.length > 0 ? ((filters.page! - 1) * filters.limit! + 1) : 0} to {Math.min(filters.page! * filters.limit!, total)} of {total} loais
-                </div>
-                <div className="flex items-center space-x-2">
-                  <label className="text-sm text-gray-700">Rows per page:</label>
-                  <select
-                    value={filters.limit}
-                    onChange={(e) => setFilters(prev => ({ ...prev, limit: Number(e.target.value), page: 1 }))}
-                    className="border border-gray-300 rounded px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={filters.page === 1}
-                  onClick={() => setFilters(prev => ({ ...prev, page: 1 }))}
-                >
-                  First
-                </Button>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={filters.page === 1}
-                  onClick={() => setFilters(prev => ({ ...prev, page: prev.page! - 1 }))}
-                >
-                  Previous
-                </Button>
-                
-                {/* Page Numbers */}
-                <div className="flex space-x-1">
-                  {(() => {
-                    const currentPage = filters.page!;
-                    const pages = [];
-                    const maxPagesToShow = 5;
-                    
-                    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-                    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-                    
-                    if (endPage - startPage < maxPagesToShow - 1) {
-                      startPage = Math.max(1, endPage - maxPagesToShow + 1);
-                    }
-                    
-                    for (let i = startPage; i <= endPage; i++) {
-                      pages.push(
-                        <button
-                          key={i}
-                          onClick={() => setFilters(prev => ({ ...prev, page: i }))}
-                          className={`px-3 py-1 text-sm rounded ${
-                            i === currentPage
-                              ? 'bg-blue-600 text-white font-medium'
-                              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
-                          }`}
-                        >
-                          {i}
-                        </button>
-                      );
-                    }
-                    
-                    return pages;
-                  })()}
-                </div>
-
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={filters.page === totalPages}
-                  onClick={() => setFilters(prev => ({ ...prev, page: prev.page! + 1 }))}
-                >
-                  Next
-                </Button>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={filters.page === totalPages}
-                  onClick={() => setFilters(prev => ({ ...prev, page: totalPages }))}
-                >
-                  Last
-                </Button>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+          {/* Shared Pagination for both views */}
+          <div className={displayMode === 'card' ? 'mt-6 bg-white shadow-sm border rounded-lg' : ''}>
+            <Pagination
+              currentPage={filters.page!}
+              totalPages={totalPages}
+              totalItems={total}
+              itemsPerPage={filters.limit!}
+              itemsCount={loais.length}
+              itemName="loais"
+              onPageChange={(page) => setFilters(prev => ({ ...prev, page }))}
+              onLimitChange={(limit) => setFilters(prev => ({ ...prev, limit, page: 1 }))}
+            />
+          </div>
+        </>
+      )}
 
       {/* Loai Form Modal */}
       <LoaiFormModal
