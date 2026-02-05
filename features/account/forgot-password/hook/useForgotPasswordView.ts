@@ -1,21 +1,21 @@
 /**
- * Login View Hook
- * Manages login form state and API interactions
+ * Forgot Password View Hook
+ * Manages forgot password form state and API interactions
  */
 
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { login, LoginRequest } from '@/lib/api/login';
+import { forgotPassword, ForgotPasswordRequest } from '@/lib/api/forgotPassword';
 
-export function useLoginView() {
+export function useForgotPasswordView() {
   const router = useRouter();
-  const [formData, setFormData] = useState<LoginRequest>({
+  const [formData, setFormData] = useState<ForgotPasswordRequest>({
     email: '',
-    password: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const validateForm = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
@@ -24,12 +24,6 @@ export function useLoginView() {
       newErrors.email = 'Email is required';
     } else if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       newErrors.email = 'Please enter a valid email';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
     }
 
     setErrors(newErrors);
@@ -50,14 +44,18 @@ export function useLoginView() {
           [name]: '',
         }));
       }
+      // Clear previous error and success states
+      setSubmitError(null);
+      setIsSuccess(false);
     },
     [errors]
   );
 
-  const handleLogin = useCallback(
+  const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      setLoginError(null);
+      setSubmitError(null);
+      setIsSuccess(false);
 
       if (!validateForm()) {
         return;
@@ -65,31 +63,35 @@ export function useLoginView() {
 
       setIsLoading(true);
       try {
-        await login(formData);
-        // Redirect to dashboard or home page
-        router.push('/admin/users');
+        await forgotPassword(formData);
+        setIsSuccess(true);
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Login failed';
-        setLoginError(message);
-        setFormData((prev) => ({
-          ...prev,
-          password: '',
-        }));
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Failed to send reset email. Please try again.';
+        setSubmitError(message);
       } finally {
         setIsLoading(false);
       }
     },
-    [formData, validateForm, router]
+    [formData, validateForm]
   );
+
+  const handleBackToLogin = useCallback(() => {
+    router.push('/account/login');
+  }, [router]);
 
   return {
     formData,
     errors,
     isLoading,
-    loginError,
+    submitError,
+    isSuccess,
     handleInputChange,
-    handleLogin,
+    handleSubmit,
+    handleBackToLogin,
     setFormData,
-    setLoginError,
+    setSubmitError,
   };
 }

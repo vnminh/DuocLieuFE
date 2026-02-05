@@ -22,7 +22,7 @@ export default function LoginView() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Login</h1>
-          <p className="text-gray-600 mt-2">Welcome back to Duốc Liệu</p>
+          <p className="text-gray-600 mt-2">Welcome back to Dược Liệu</p>
         </div>
 
         {/* Error Message */}

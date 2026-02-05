@@ -25,7 +25,7 @@ export default function SignupView() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
-          <p className="text-gray-600 mt-2">Join Duốc Liệu and start exploring</p>
+          <p className="text-gray-600 mt-2">Join Dược Liệu and start exploring</p>
         </div>
 
         {/* Error Message */}

@@ -63,7 +63,7 @@ class CookieStorage {
    * Check if user is authenticated
    */
   isAuthenticated(): boolean {
-    return this.getUser() !== null && this.getToken() !== null;
+    return this.getUser() !== null;
   }
 
   /**

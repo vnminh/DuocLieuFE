@@ -83,16 +83,22 @@ function MapboxMapComponent({
         type: 'line',
         source: 'vung-phan-bo',
         paint: {
-          'line-color': ['case', ['get', 'isSelected'], '#1d4ed8', '#3b82f6'],
+          'line-color': ['case', ['get', 'isSelected'], '#d81d1d', '#e63c3c'],
           'line-width': ['case', ['get', 'isSelected'], 4, 2],
+          'line-dasharray': [2, 2],
         },
       });
 
-      // Handle click on polygon
+      // Handle click on polygon (skip if already selected to allow marker clicks)
       map.on('click', 'vung-phan-bo-fill', (e) => {
         if (e.features && e.features.length > 0) {
           const feature = e.features[0];
           const vungId = feature.properties?.id;
+          const isAlreadySelected = feature.properties?.isSelected;
+          
+          // Skip if this polygon is already selected
+          if (isAlreadySelected) return;
+          
           const vung = vungPhanBos.find(v => v.id === vungId);
           if (vung) {
             onSelectVungPhanBo(vung);
@@ -125,7 +131,7 @@ function MapboxMapComponent({
             className: 'polygon-tooltip',
           })
             .setLngLat(e.lngLat)
-            .setHTML(`<div class="px-2 py-1 text-sm font-medium">${name}</div>`)
+            .setHTML(`<div class="px-2 py-1 text-sm font-medium text-gray-700">${name}</div>`)
             .addTo(map);
         }
       });
@@ -159,6 +165,10 @@ function MapboxMapComponent({
       if (e.features && e.features.length > 0) {
         const feature = e.features[0];
         const vungId = feature.properties?.id;
+        
+        // Skip if this polygon is already selected to allow marker clicks
+        if (feature.properties?.isSelected) return;
+        
         const vung = vungPhanBos.find(v => v.id === vungId);
         if (vung) {
           onSelectVungPhanBo(vung);

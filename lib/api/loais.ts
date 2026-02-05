@@ -86,6 +86,25 @@ export async function deleteLoai(id: number): Promise<Loai> {
   return response.data || response;
 }
 
+/**
+ * Get image count for a Loài
+ * Endpoint: GET /loais/:id/images/count
+ */
+export async function getLoaiImageCount(id: number): Promise<{ count: number; collection_uri: string }> {
+  const response = await apiGet<any>(`/loais/${id}/images/count`);
+  return response.data || { count: 0, collection_uri: '' };
+}
+
+/**
+ * Get image URL for a Loài by index
+ * Returns the URL to fetch the image directly
+ * Endpoint: GET /loais/:id/images/:index
+ */
+export function getLoaiImageUrl(id: number, index: number): string {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  return `${baseUrl}/loais/${id}/images/${index}`;
+}
+
 
 /**
  * Upload Loài CSV file with optional nested data

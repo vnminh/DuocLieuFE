@@ -168,36 +168,40 @@ export default function UsersView() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatDate(user.created_at)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => handleViewUser(user)}
-                        >
-                          <Eye className="w-4 h-4 mr-1" />
-                          View
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          onClick={() => handleEditUser(user)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant={user.status === UserStatus.ACTIVE ? 'secondary' : 'primary'}
-                          onClick={() => handleToggleBlock(user.id, cookieStorage.getUser()?.role || UserRole.USER)}
-                        >
-                          {user.status === UserStatus.ACTIVE ? 'Block' : 'Unblock'}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="danger"
-                          onClick={() => handleDeleteUser(user.id)}
-                        >
-                          Delete
-                        </Button>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => handleViewUser(user)}
+                          >
+                            <span className="flex items-center">
+                              <Eye className="w-4 h-4 mr-1" />
+                              View
+                            </span>
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={() => handleEditUser(user)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant={user.status === UserStatus.ACTIVE ? 'secondary' : 'primary'}
+                            onClick={() => handleToggleBlock(user.id, cookieStorage.getUser()?.role || UserRole.USER)}
+                          >
+                            {user.status === UserStatus.ACTIVE ? 'Block' : 'Unblock'}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => handleDeleteUser(user.id)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}

@@ -4,121 +4,94 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import {
-  LayoutDashboard,
-  Users,
-  Shield,
-  Filter,
-  Heart,
-  Layers,
-  FileText,
-  Settings,
-  MapPin,
-  Map,
-} from 'lucide-react';
-
-interface SidebarItem {
-  name: string;
-  href: string;
-  icon: React.ReactNode;
-}
-
-const sidebarItems: SidebarItem[] = [
-  {
-    name: 'Dashboard',
-    href: '/admin',
-    icon: <LayoutDashboard className="w-5 h-5" />,
-  },
-  {
-    name: 'Users',
-    href: '/admin/users',
-    icon: <Users className="w-5 h-5" />,
-  },
-  {
-    name: 'Nganhs',
-    href: '/admin/nganhs',
-    icon: <Filter className="w-5 h-5" />,
-  },
-  {
-    name: 'Hos',
-    href: '/admin/hos',
-    icon: <Heart className="w-5 h-5" />,
-  },
-  {
-    name: 'Loais',
-    href: '/admin/loais',
-    icon: <Layers className="w-5 h-5" />,
-  },
-  {
-    name: 'Vùng Phân Bố',
-    href: '/admin/vung-phan-bo',
-    icon: <MapPin className="w-5 h-5" />,
-  },
-  {
-    name: 'Loai Map',
-    href: '/admin/loai-map',
-    icon: <Map className="w-5 h-5" />,
-  },
-  {
-    name: 'Settings',
-    href: '/admin/settings',
-    icon: <Settings className="w-5 h-5" />,
-  },
-];
+import { adminRoutes } from '@/lib/routes';
 
 interface SidebarProps {
   className?: string;
+  isExpanded?: boolean;
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, isExpanded = true }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <div className={cn('flex flex-col w-64 bg-gray-900', className)}>
+    <div
+      className={cn(
+        'flex flex-col bg-gray-900 transition-all duration-300 ease-in-out',
+        isExpanded ? 'w-64' : 'w-16',
+        className
+      )}
+    >
       {/* Logo */}
-      <div className="flex items-center justify-center h-16 px-4 bg-gray-800">
-        <h1 className="text-xl font-bold text-white">
-          Duoc Lieu Admin
-        </h1>
+      <div className="flex items-center h-16 px-4 bg-gray-800">
+        {isExpanded ? (
+          <h1 className="text-xl font-bold text-white whitespace-nowrap overflow-hidden">
+            Duoc Lieu Admin
+          </h1>
+        ) : (
+          <div className="w-full flex justify-center">
+            <span className="text-xl font-bold text-white">DL</span>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-2 py-4 space-y-1">
-        {sidebarItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
-          
+      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+        {adminRoutes.map((route) => {
+          const Icon = route.icon;
+          const isActive =
+            pathname === route.href ||
+            (route.href !== '/admin' && pathname.startsWith(route.href));
+
           return (
             <Link
-              key={item.name}
-              href={item.href}
+              key={route.href}
+              href={route.href}
               className={cn(
-                'group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors',
+                'group flex items-center py-2 text-sm font-medium rounded-md transition-colors',
+                isExpanded ? 'px-2' : 'px-0 justify-center',
                 isActive
                   ? 'bg-gray-800 text-white'
                   : 'text-gray-300 hover:bg-gray-700 hover:text-white'
               )}
+              title={!isExpanded ? route.name : undefined}
             >
-              <span className="mr-3 flex-shrink-0">
-                {item.icon}
+              <span className={cn('flex-shrink-0', isExpanded && 'mr-3')}>
+                <Icon className="w-5 h-5" />
               </span>
-              {item.name}
+              {isExpanded && (
+                <span className="whitespace-nowrap overflow-hidden">
+                  {route.name}
+                </span>
+              )}
             </Link>
           );
         })}
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-3 border-t border-gray-700">
-        <div className="flex items-center">
+      <div className="px-2 py-3 border-t border-gray-700">
+        <div
+          className={cn(
+            'flex items-center',
+            !isExpanded && 'justify-center'
+          )}
+        >
           <div className="flex-shrink-0">
             <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
               <span className="text-xs font-medium text-white">A</span>
             </div>
           </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-white">Admin User</p>
-            <p className="text-xs text-gray-400">admin@duoclieu.com</p>
-          </div>
+          {isExpanded && (
+            <div className="ml-3 overflow-hidden">
+              <p className="text-sm font-medium text-white whitespace-nowrap">
+                Admin User
+              </p>
+              <p className="text-xs text-gray-400 whitespace-nowrap">
+                admin@duoclieu.com
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

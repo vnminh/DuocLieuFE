@@ -156,8 +156,10 @@ export default function HosView() {
                           variant="secondary"
                           onClick={() => handleViewHo(ho)}
                         >
-                          <Eye className="w-4 h-4 mr-1" />
-                          View
+                          <span className="flex items-center"> 
+                            <Eye className="w-4 h-4 mr-1" />
+                            View
+                          </span>
                         </Button>
                         <Button
                           size="sm"

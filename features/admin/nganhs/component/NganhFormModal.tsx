@@ -193,7 +193,7 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
               onChange={handleInputChange}
               rows={3}
               disabled={viewMode}
-              className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-100"
+              className="text-gray-700 flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-100"
               placeholder="Enter description"
             />
           </div>

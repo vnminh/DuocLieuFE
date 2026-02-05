@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Modal } from '@/features/common-ui/modal';
 import { Button } from '@/features/common-ui/button';
 import { Input } from '@/features/common-ui/input';
@@ -13,6 +14,7 @@ import { createLoai, updateLoai, uploadLoaisCsv } from '@/lib/api/loais';
 import { loadAllHos } from '@/lib/api/hos';
 import { loadAllNganhs } from '@/lib/api/nganhs';
 import { LoaiFormModalProps } from '../types/loais';
+import { Image as ImageIcon } from 'lucide-react';
 
 export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: LoaiFormModalProps) {
   const [loading, setLoading] = useState(false);
@@ -444,13 +446,25 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
           <div className="border-b pb-4">
             <h3 className="text-sm font-semibold mb-3 text-gray-700">Media</h3>
             <Input
-              label="Image URI (Collection URI)"
+              label="Image Folder Path (Collection URI)"
               name="collection_uri"
               value={formData.collection_uri}
               onChange={handleInputChange}
-              placeholder="https://example.com/image.jpg"
+              placeholder="/path/to/images/folder"
               disabled={viewMode}
             />
+            {loai && loai.id && (
+              <div className="mt-2">
+                <Link
+                  href={`/admin/loais-detail?id=${loai.id}`}
+                  className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <ImageIcon className="w-4 h-4 mr-1" />
+                  View Image Gallery
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Uses & Components Section */}

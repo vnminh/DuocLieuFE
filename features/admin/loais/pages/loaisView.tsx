@@ -276,8 +276,10 @@ export default function LoaisView() {
                           variant="secondary"
                           onClick={() => handleViewLoai(loai)}
                         >
-                          <Eye className="w-4 h-4 mr-1" />
-                          View
+                          <span className="flex items-center">           
+                            <Eye className="w-4 h-4 mr-1" />
+                            View
+                          </span>
                         </Button>
                         <Button
                           size="sm"

@@ -1,16 +1,30 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { Sidebar } from '@/features/common-ui/Sidebar';
-import { Download, LogOut } from 'lucide-react';
+import { cookieStorage } from '@/lib/cookieStorage';
+import { LogOut, PanelLeft } from 'lucide-react';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  const toggleSidebar = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  const handleSignOut = () => {
+    cookieStorage.logout();
+    window.location.reload();
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar isExpanded={isExpanded} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -19,13 +33,24 @@ export default function AdminLayout({
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
+                <button
+                  onClick={toggleSidebar}
+                  className="p-2 mr-3 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                  title="Toggle sidebar"
+                >
+                  <PanelLeft className="w-5 h-5" />
+                </button>
                 <h2 className="text-lg font-semibold text-gray-900">
                   Dashboard
                 </h2>
               </div>
               <div className="flex items-center space-x-4">
-                <button className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <LogOut className="w-6 h-6" />
+                <button 
+                  onClick={handleSignOut}
+                  className="p-2 rounded-md text-gray-400 hover:text-red-500 hover:bg-gray-100 transition-colors"
+                  title="Sign out"
+                >
+                  <LogOut className="w-5 h-5" />
                 </button>
               </div>
             </div>

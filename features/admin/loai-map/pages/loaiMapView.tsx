@@ -107,19 +107,19 @@ export default function LoaiMapView() {
               <div className="space-y-1 text-xs">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full bg-green-500 border-2 border-white shadow"></div>
-                  <span>Thấp</span>
+                  <span className='text-gray-700'>Thấp</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full bg-yellow-500 border-2 border-white shadow"></div>
-                  <span>Trung bình</span>
+                  <span className='text-gray-700'>Trung bình</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full bg-orange-500 border-2 border-white shadow"></div>
-                  <span>Cao</span>
+                  <span className='text-gray-700'>Cao</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full bg-red-500 border-2 border-white shadow"></div>
-                  <span>Rất cao</span>
+                  <span className='text-gray-700'>Rất cao</span>
                 </div>
               </div>
             </div>
