@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { cookieStorage } from '@/lib/cookieStorage';
+import { UserRole } from '@/types/user';
 
 export default function Home() {
   const router = useRouter();
@@ -10,10 +11,14 @@ export default function Home() {
   useEffect(() => {
     // Check if user is logged in via cookie
     const user = cookieStorage.getUser();
-    
+
     if (user) {
-      // User is logged in, redirect to admin page
-      router.replace('/admin/users');
+      // Redirect based on role
+      if (user.role === UserRole.USER) {
+        router.replace('/admin/search');
+      } else {
+        router.replace('/admin/users');
+      }
     } else {
       // User is not logged in, redirect to login page
       router.replace('/account/login');

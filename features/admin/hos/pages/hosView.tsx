@@ -9,8 +9,11 @@ import { Pagination } from '@/features/common-ui/pagination';
 import { HoFormModal } from '@/features/admin/hos/component/HoFormModal';
 import { useHosView } from '../hook/useHosView';
 import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { usePermissions } from '@/lib/permissions';
+import { ErrorModal } from '@/features/common-ui/error-modal';
 
 export default function HosView() {
+  const { canEdit, canDelete, canAdd } = usePermissions();
   const {
     handleCreateHo,
     setSearchInput,
@@ -32,6 +35,8 @@ export default function HosView() {
     showModal,
     editingHo,
     isViewMode,
+    errorMessage,
+    setErrorMessage,
   } = useHosView();
 
   return (
@@ -42,14 +47,16 @@ export default function HosView() {
           <h1 className="text-3xl font-bold text-gray-900">Ho Management</h1>
           <p className="text-gray-600 mt-1">Manage taxonomic families (hos)</p>
         </div>
-        <Button onClick={handleCreateHo}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Ho
-        </Button>
+        {canAdd && (
+          <Button onClick={handleCreateHo}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Ho
+          </Button>
+        )}
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border">
+      <div className="bg-white p-4 rounded-lg shadow-sm">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
             <Input
@@ -84,7 +91,7 @@ export default function HosView() {
       </div>
 
       {/* Table */}
-      <div className="bg-white shadow-sm border rounded-lg overflow-hidden">
+      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -161,22 +168,26 @@ export default function HosView() {
                             View
                           </span>
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          onClick={() => handleEditHo(ho)}
-                        >
-                          <Edit className="w-4 h-4 mr-1" />
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="danger"
-                          onClick={() => handleDeleteHo(ho.id)}
-                        >
-                          <Trash2 className="w-4 h-4 mr-1" />
-                          Delete
-                        </Button>
+                        {canEdit && (
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={() => handleEditHo(ho)}
+                          >
+                            <Edit className="w-4 h-4 mr-1" />
+                            Edit
+                          </Button>
+                        )}
+                        {canDelete && (
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => handleDeleteHo(ho.id)}
+                          >
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Delete
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -212,6 +223,12 @@ export default function HosView() {
         onSuccess={handleModalSuccess}
         ho={editingHo}
         viewMode={isViewMode}
+      />
+
+      <ErrorModal
+        isOpen={!!errorMessage}
+        onClose={() => setErrorMessage(null)}
+        message={errorMessage || ''}
       />
     </div>
   );

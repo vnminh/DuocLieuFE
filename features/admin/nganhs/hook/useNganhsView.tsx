@@ -18,7 +18,8 @@ export function useNganhsView() {
         limit: 10,
     });
     const [searchInput, setSearchInput] = useState('');
-    
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     useEffect(() => {
         const timer = setTimeout(() => {
             setFilters(prev => ({ ...prev, search: searchInput, page: 1 }));
@@ -70,7 +71,7 @@ export function useNganhsView() {
                 fetchNganhs();
             } catch (error) {
                 console.error('Error deleting nganh:', error);
-                alert('Failed to delete nganh');
+                setErrorMessage('Failed to delete nganh');
             }
         }
     };
@@ -103,5 +104,7 @@ export function useNganhsView() {
         showModal,
         editingNganh,
         isViewMode,
+        errorMessage,
+        setErrorMessage,
     }
 }

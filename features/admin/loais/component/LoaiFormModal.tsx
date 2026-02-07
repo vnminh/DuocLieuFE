@@ -40,7 +40,6 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
     bo_phan_su_dung: '',
     cong_dung: '',
     bai_thuoc: '',
-    tac_dung_duoc_ly: '',
     kinh_do: '',
     vi_do: '',
     id_vung_phan_bo: '',
@@ -79,7 +78,6 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
           bo_phan_su_dung: loai.cong_dung_va_thanh_phan_hoa_hoc?.map((cong_dung_va_thanh_phan_hoa_hoc)=>cong_dung_va_thanh_phan_hoa_hoc.bo_phan_su_dung).join(';')||'',
           cong_dung: loai.cong_dung_va_thanh_phan_hoa_hoc?.map((cong_dung_va_thanh_phan_hoa_hoc)=>cong_dung_va_thanh_phan_hoa_hoc.cong_dung).join(';')||'',
           bai_thuoc: loai.cong_dung_va_thanh_phan_hoa_hoc?.map((cong_dung_va_thanh_phan_hoa_hoc)=>cong_dung_va_thanh_phan_hoa_hoc.bai_thuoc).join(';')||'',
-          tac_dung_duoc_ly: loai.cong_dung_va_thanh_phan_hoa_hoc?.map((cong_dung_va_thanh_phan_hoa_hoc)=>cong_dung_va_thanh_phan_hoa_hoc.tac_dung_duoc_ly).join(';')||'',
           kinh_do: loai.vi_tri_dia_li?.map((vi_tri_dia_li)=>vi_tri_dia_li.kinh_do).join(';')||'',
           vi_do: loai.vi_tri_dia_li?.map((vi_tri_dia_li)=>vi_tri_dia_li.vi_do).join(';')||'',
           id_vung_phan_bo: loai.vi_tri_dia_li?.map((vi_tri_dia_li)=>vi_tri_dia_li.id_vung_phan_bo).join(';')||'',
@@ -103,7 +101,6 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
           bo_phan_su_dung: '',
           cong_dung: '',
           bai_thuoc: '',
-          tac_dung_duoc_ly: '',
           kinh_do: '',
           vi_do: '',
           id_vung_phan_bo: ''
@@ -190,7 +187,6 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
         ...(formData.bo_phan_su_dung.trim() && { bo_phan_su_dung: formData.bo_phan_su_dung.trim() }),
         ...(formData.cong_dung.trim() && { cong_dung: formData.cong_dung.trim() }),
         ...(formData.bai_thuoc.trim() && { bai_thuoc: formData.bai_thuoc.trim() }),
-        ...(formData.tac_dung_duoc_ly.trim() && { tac_dung_duoc_ly: formData.tac_dung_duoc_ly.trim() }),
         ...(formData.kinh_do.trim() && { kinh_do: formData.kinh_do.trim() }),
         ...(formData.vi_do.trim() && { vi_do: formData.vi_do.trim() }),
         ...(formData.id_vung_phan_bo.trim() && { id_vung_phan_bo: formData.id_vung_phan_bo.trim() })
@@ -239,7 +235,6 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
     'bo_phan_su_dung',
     'cong_dung',
     'bai_thuoc',
-    'tac_dung_duoc_ly',
     'kinh_do',
     'vi_do',
     'id_vung_phan_bo'
@@ -261,7 +256,6 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
     bo_phan_su_dung: 'Leaves;Roots;Stems',
     cong_dung: 'Anti-inflammatory;Digestive;Fever reduction',
     bai_thuoc: 'Traditional fever medicine;Digestive tea',
-    tac_dung_duoc_ly: 'Antimicrobial;Hepatoprotective',
     kinh_do: '106.8;106.9;107.0',
     vi_do: '20.5;20.6;20.7',
     id_vung_phan_bo: '1;2;3'
@@ -304,7 +298,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
       {activeTab === 'form' && (
         <form onSubmit={handleSubmit} className="space-y-4 max-h-96 overflow-y-auto pr-2">
           {/* Basic Information Section */}
-          <div className="border-b pb-4">
+          <div className="pb-4">
             <h3 className="text-sm font-semibold mb-3 text-gray-700">Basic Information</h3>
             <Input
               label="Scientific Name (Ten Khoa Hoc) *"
@@ -369,7 +363,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
           </div>
 
           {/* Biological Characteristics Section */}
-          <div className="border-b pb-4">
+          <div className="pb-4">
             <h3 className="text-sm font-semibold mb-3 text-gray-700">Biological Characteristics</h3>
             <Input
               label="Characteristics Description (Dac Diem Mo Ta)"
@@ -414,7 +408,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
           </div>
 
           {/* Cultivation & Harvesting Section */}
-          <div className="border-b pb-4">
+          <div className="pb-4">
             <h3 className="text-sm font-semibold mb-3 text-gray-700">Cultivation & Harvesting</h3>
             <Input
               label="Cultivation Technique Details (Chi Tiet Ky Thuat)"
@@ -443,7 +437,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
           </div>
 
           {/* Image & Media Section */}
-          <div className="border-b pb-4">
+          <div className="pb-4">
             <h3 className="text-sm font-semibold mb-3 text-gray-700">Media</h3>
             <Input
               label="Image Folder Path (Collection URI)"
@@ -468,7 +462,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
           </div>
 
           {/* Uses & Components Section */}
-          <div className="border-b pb-4">
+          <div className="pb-4">
             <h3 className="text-sm font-semibold mb-3 text-gray-700">Uses & Components (semicolon-separated)</h3>
             <Input
               label="Usable Parts (Bo Phan Su Dung)"
@@ -494,18 +488,10 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
               placeholder="Traditional remedies"
               disabled={viewMode}
             />
-            <Input
-              label="Pharmacological Effects (Tac Dung Duoc Ly)"
-              name="tac_dung_duoc_ly"
-              value={formData.tac_dung_duoc_ly}
-              onChange={handleInputChange}
-              placeholder="e.g., Anti-inflammatory;Antimicrobial"
-              disabled={viewMode}
-            />
           </div>
 
           {/* Geographic Distribution Section */}
-          <div className="border-b pb-4">
+          <div className="pb-4">
             <h3 className="text-sm font-semibold mb-3 text-gray-700">Geographic Distribution (semicolon-separated)</h3>
             <Input
               label="Longitude (Kinh Do)"

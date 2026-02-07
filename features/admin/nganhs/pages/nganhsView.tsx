@@ -8,8 +8,11 @@ import { Pagination } from '@/features/common-ui/pagination';
 import { NganhFormModal } from '@/features/admin/nganhs/component/NganhFormModal';
 import { useNganhsView } from '../hook/useNganhsView';
 import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { usePermissions } from '@/lib/permissions';
+import { ErrorModal } from '@/features/common-ui/error-modal';
 
 export default function NganhsView() {
+  const { canEdit, canDelete, canAdd } = usePermissions();
   const {
     handleCreateNganh,
     setSearchInput,
@@ -29,6 +32,8 @@ export default function NganhsView() {
     showModal,
     editingNganh,
     isViewMode,
+    errorMessage,
+    setErrorMessage,
   } = useNganhsView();
 
   return (
@@ -39,14 +44,16 @@ export default function NganhsView() {
           <h1 className="text-3xl font-bold text-gray-900">Nganh Management</h1>
           <p className="text-gray-600 mt-1">Manage taxonomic kingdoms (nganhs)</p>
         </div>
-        <Button onClick={handleCreateNganh}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Nganh
-        </Button>
+        {canAdd && (
+          <Button onClick={handleCreateNganh}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Nganh
+          </Button>
+        )}
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border">
+      <div className="bg-white p-4 rounded-lg shadow-sm">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <Input
@@ -68,7 +75,7 @@ export default function NganhsView() {
       </div>
 
       {/* Table */}
-      <div className="bg-white shadow-sm border rounded-lg overflow-hidden">
+      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -137,22 +144,26 @@ export default function NganhsView() {
                             View
                           </span>
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          onClick={() => handleEditNganh(nganh)}
-                        >
-                          <Edit className="w-4 h-4 mr-1" />
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="danger"
-                          onClick={() => handleDeleteNganh(nganh.id)}
-                        >
-                          <Trash2 className="w-4 h-4 mr-1" />
-                          Delete
-                        </Button>
+                        {canEdit && (
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={() => handleEditNganh(nganh)}
+                          >
+                            <Edit className="w-4 h-4 mr-1" />
+                            Edit
+                          </Button>
+                        )}
+                        {canDelete && (
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => handleDeleteNganh(nganh.id)}
+                          >
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Delete
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -188,6 +199,12 @@ export default function NganhsView() {
         onSuccess={handleModalSuccess}
         nganh={editingNganh}
         viewMode={isViewMode}
+      />
+
+      <ErrorModal
+        isOpen={!!errorMessage}
+        onClose={() => setErrorMessage(null)}
+        message={errorMessage || ''}
       />
     </div>
   );

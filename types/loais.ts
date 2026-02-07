@@ -49,7 +49,6 @@ export interface CreateLoaiWithDetailsData {
   bo_phan_su_dung?: string[];
   cong_dung?: string[];
   bai_thuoc?: string[];
-  tac_dung_duoc_ly?: string[];
 
   // Vi_tri_dia_li fields (can have multiple)
   kinh_do?: number[];
@@ -84,7 +83,6 @@ export interface UpdateLoaiData {
   bo_phan_su_dung?: string;
   cong_dung?: string;
   bai_thuoc?: string;
-  tac_dung_duoc_ly?: string;
 
   // Vi_tri_dia_li fields (can have multiple)
   kinh_do?: string;
@@ -135,6 +133,7 @@ export interface HinhAnh {
   id: number;
   ten_loai_khoa_hoc: string;
   collection_uri?: string;
+  so_luong_anh_preview?: number;
   created_at: Date;
   updated_at: Date;
 }
@@ -145,7 +144,6 @@ export interface CongDungVaThanPhanHoaHoc {
   bo_phan_su_dung?: string;
   cong_dung?: string;
   bai_thuoc?: string;
-  tac_dung_duoc_ly?: string;
   created_at: Date;
   updated_at: Date;
 }

@@ -32,6 +32,7 @@ export function useLoaisView() {
         limit: 10
     });
     const [searchInput, setSearchInput] = useState('');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -115,7 +116,7 @@ export function useLoaisView() {
                 fetchLoais();
             } catch (error) {
                 console.error('Error deleting loai:', error);
-                alert('Failed to delete loai');
+                setErrorMessage('Failed to delete loai');
             }
         }
     };
@@ -179,5 +180,7 @@ export function useLoaisView() {
         isViewMode,
         displayMode,
         setDisplayMode,
+        errorMessage,
+        setErrorMessage,
     }
 }

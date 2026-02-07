@@ -12,8 +12,11 @@ import { loadUsers, deleteUser, toggleUserBlock } from '@/lib/api/users';
 import { useUsersView } from '../hook/useUsersView';
 import { cookieStorage } from '@/lib/cookieStorage';
 import { Plus, Upload, Eye } from 'lucide-react';
+import { usePermissions } from '@/lib/permissions';
+import { ErrorModal } from '@/features/common-ui/error-modal';
 
 export default function UsersView() {
+  const { canEditUsers, canDeleteUsers, canAddUsers } = usePermissions();
   const {
       handleCreateUser,
       setSearchInput,
@@ -37,6 +40,8 @@ export default function UsersView() {
       showModal,
       editingUser,
       isViewMode,
+      errorMessage,
+      setErrorMessage,
     } = useUsersView();
 
   const [csvMode, setCsvMode] = useState(false);
@@ -53,14 +58,16 @@ export default function UsersView() {
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
           <p className="text-gray-600 mt-1">Manage system users and their roles</p>
         </div>
-        <Button onClick={handleCreateUser}>
-          <Plus className="w-4 h-4 mr-2" />
-          Create User
-        </Button>
+        {canAddUsers && (
+          <Button onClick={handleCreateUser}>
+            <Plus className="w-4 h-4 mr-2" />
+            Create User
+          </Button>
+        )}
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border">
+      <div className="bg-white p-4 rounded-lg shadow-sm">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Input
             label="Search by name or email"
@@ -88,7 +95,7 @@ export default function UsersView() {
       </div>
 
       {/* Table */}
-      <div className="bg-white shadow-sm border rounded-lg overflow-hidden">
+      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -180,27 +187,33 @@ export default function UsersView() {
                               View
                             </span>
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="primary"
-                            onClick={() => handleEditUser(user)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant={user.status === UserStatus.ACTIVE ? 'secondary' : 'primary'}
-                            onClick={() => handleToggleBlock(user.id, cookieStorage.getUser()?.role || UserRole.USER)}
-                          >
-                            {user.status === UserStatus.ACTIVE ? 'Block' : 'Unblock'}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            onClick={() => handleDeleteUser(user.id)}
-                          >
-                            Delete
-                          </Button>
+                          {canEditUsers && (
+                            <Button
+                              size="sm"
+                              variant="primary"
+                              onClick={() => handleEditUser(user)}
+                            >
+                              Edit
+                            </Button>
+                          )}
+                          {canEditUsers && (
+                            <Button
+                              size="sm"
+                              variant={user.status === UserStatus.ACTIVE ? 'secondary' : 'primary'}
+                              onClick={() => handleToggleBlock(user.id, cookieStorage.getUser()?.role || UserRole.USER)}
+                            >
+                              {user.status === UserStatus.ACTIVE ? 'Block' : 'Unblock'}
+                            </Button>
+                          )}
+                          {canDeleteUsers && (
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              onClick={() => handleDeleteUser(user.id)}
+                            >
+                              Delete
+                            </Button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -241,6 +254,12 @@ export default function UsersView() {
         onSuccess={handleModalSuccess}
         user={editingUser}
         viewMode={isViewMode}
+      />
+
+      <ErrorModal
+        isOpen={!!errorMessage}
+        onClose={() => setErrorMessage(null)}
+        message={errorMessage || ''}
       />
     </div>
   );

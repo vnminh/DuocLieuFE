@@ -10,8 +10,11 @@ import { LoaiFormModal } from '@/features/admin/loais/component/LoaiFormModal';
 import { LoaiCard } from '@/features/admin/loais/component/LoaiCard';
 import { useLoaisView } from '../hook/useLoaisView';
 import { Plus, Search, Edit, Trash2, Filter, Eye, List, LayoutGrid } from 'lucide-react';
+import { usePermissions } from '@/lib/permissions';
+import { ErrorModal } from '@/features/common-ui/error-modal';
 
 export default function LoaisView() {
+  const { canEdit, canDelete, canAdd } = usePermissions();
   const {
     handleCreateLoai,
     setSearchInput,
@@ -39,6 +42,8 @@ export default function LoaisView() {
     isViewMode,
     displayMode,
     setDisplayMode,
+    errorMessage,
+    setErrorMessage,
   } = useLoaisView();
 
   return (
@@ -75,15 +80,17 @@ export default function LoaisView() {
               <LayoutGrid className="w-5 h-5" />
             </button>
           </div>
-          <Button onClick={handleCreateLoai}>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Loai
-          </Button>
+          {canAdd && (
+            <Button onClick={handleCreateLoai}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Loai
+            </Button>
+          )}
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border">
+      <div className="bg-white p-4 rounded-lg shadow-sm">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <div className="relative md:col-span-2">
             <Input
@@ -183,12 +190,12 @@ export default function LoaisView() {
 
       {/* Content - List or Card View */}
       {loading ? (
-        <div className="bg-white shadow-sm border rounded-lg p-8 text-center">
+        <div className="bg-white shadow-sm rounded-lg p-8 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-2 text-gray-600">Loading loais...</p>
         </div>
       ) : loais.length === 0 ? (
-        <div className="bg-white shadow-sm border rounded-lg p-8 text-center">
+        <div className="bg-white shadow-sm rounded-lg p-8 text-center">
           <p className="text-gray-600">
             {hasActiveFilters ? 'No loais found matching your filters' : 'No loais found'}
           </p>
@@ -211,7 +218,7 @@ export default function LoaisView() {
             </div>
           ) : (
             /* List View (Table) */
-            <div className="bg-white shadow-sm border rounded-lg overflow-hidden">
+            <div className="bg-white shadow-sm rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
@@ -281,22 +288,26 @@ export default function LoaisView() {
                             View
                           </span>
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          onClick={() => handleEditLoai(loai)}
-                        >
-                          <Edit className="w-4 h-4 mr-1" />
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="danger"
-                          onClick={() => handleDeleteLoai(loai.id)}
-                        >
-                          <Trash2 className="w-4 h-4 mr-1" />
-                          Delete
-                        </Button>
+                        {canEdit && (
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={() => handleEditLoai(loai)}
+                          >
+                            <Edit className="w-4 h-4 mr-1" />
+                            Edit
+                          </Button>
+                        )}
+                        {canDelete && (
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => handleDeleteLoai(loai.id)}
+                          >
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Delete
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -307,7 +318,7 @@ export default function LoaisView() {
           )}
 
           {/* Shared Pagination for both views */}
-          <div className={displayMode === 'card' ? 'mt-6 bg-white shadow-sm border rounded-lg' : ''}>
+          <div className={displayMode === 'card' ? 'mt-6 bg-white shadow-sm rounded-lg' : ''}>
             <Pagination
               currentPage={filters.page!}
               totalPages={totalPages}
@@ -329,6 +340,12 @@ export default function LoaisView() {
         onSuccess={handleModalSuccess}
         loai={editingLoai}
         viewMode={isViewMode}
+      />
+
+      <ErrorModal
+        isOpen={!!errorMessage}
+        onClose={() => setErrorMessage(null)}
+        message={errorMessage || ''}
       />
     </div>
   );

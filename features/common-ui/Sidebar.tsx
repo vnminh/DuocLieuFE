@@ -1,10 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { adminRoutes } from '@/lib/routes';
+import { getRoutesForRole } from '@/lib/routes';
+import { cookieStorage } from '@/lib/cookieStorage';
+import { UserRole } from '@/types/user';
 
 interface SidebarProps {
   className?: string;
@@ -13,6 +15,10 @@ interface SidebarProps {
 
 export function Sidebar({ className, isExpanded = true }: SidebarProps) {
   const pathname = usePathname();
+  const user = cookieStorage.getUser();
+  const role = user?.role || UserRole.USER;
+
+  const routes = useMemo(() => getRoutesForRole(role), [role]);
 
   return (
     <div
@@ -26,7 +32,7 @@ export function Sidebar({ className, isExpanded = true }: SidebarProps) {
       <div className="flex items-center h-16 px-4 bg-gray-800">
         {isExpanded ? (
           <h1 className="text-xl font-bold text-white whitespace-nowrap overflow-hidden">
-            Duoc Lieu Admin
+            Duoc Lieu
           </h1>
         ) : (
           <div className="w-full flex justify-center">
@@ -37,7 +43,7 @@ export function Sidebar({ className, isExpanded = true }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
-        {adminRoutes.map((route) => {
+        {routes.map((route) => {
           const Icon = route.icon;
           const isActive =
             pathname === route.href ||
@@ -79,16 +85,18 @@ export function Sidebar({ className, isExpanded = true }: SidebarProps) {
         >
           <div className="flex-shrink-0">
             <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-              <span className="text-xs font-medium text-white">A</span>
+              <span className="text-xs font-medium text-white">
+                {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+              </span>
             </div>
           </div>
           {isExpanded && (
             <div className="ml-3 overflow-hidden">
               <p className="text-sm font-medium text-white whitespace-nowrap">
-                Admin User
+                {user?.full_name || 'User'}
               </p>
               <p className="text-xs text-gray-400 whitespace-nowrap">
-                admin@duoclieu.com
+                {role}
               </p>
             </div>
           )}

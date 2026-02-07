@@ -37,17 +37,8 @@ export async function getLoaiById(id: number): Promise<Loai> {
 }
 
 export async function getLoaiByName(tenKhoaHoc: string): Promise<Loai> {
-  const response = await apiGet<any>(`/loais/${tenKhoaHoc}`);
+  const response = await apiGet<any>(`/loais/by-name/${encodeURIComponent(tenKhoaHoc)}`);
   return response.data || response;
-}
-
-/**
- * Get Loai with all related data (ho, nganh, dac_diem_sinh_hoc, etc.)
- * Endpoint: GET /loais/:id/detail
- */
-export async function getLoaiDetail(id: number): Promise<Loai> {
-  const response = await apiGet<Loai>(`/loais/${id}/detail`);
-  return response;
 }
 
 /**
@@ -85,26 +76,6 @@ export async function deleteLoai(id: number): Promise<Loai> {
   const response = await apiDelete<any>(`/loais/${id}`);
   return response.data || response;
 }
-
-/**
- * Get image count for a Loài
- * Endpoint: GET /loais/:id/images/count
- */
-export async function getLoaiImageCount(id: number): Promise<{ count: number; collection_uri: string }> {
-  const response = await apiGet<any>(`/loais/${id}/images/count`);
-  return response.data || { count: 0, collection_uri: '' };
-}
-
-/**
- * Get image URL for a Loài by index
- * Returns the URL to fetch the image directly
- * Endpoint: GET /loais/:id/images/:index
- */
-export function getLoaiImageUrl(id: number, index: number): string {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-  return `${baseUrl}/loais/${id}/images/${index}`;
-}
-
 
 /**
  * Upload Loài CSV file with optional nested data
@@ -153,7 +124,6 @@ export async function uploadLoaisCsv(file: File): Promise<CSVUploadResponse<Loai
         if (row.bo_phan_su_dung) baseData.bo_phan_su_dung = row.bo_phan_su_dung.split(';').map(s => s.trim());
         if (row.cong_dung) baseData.cong_dung = row.cong_dung.split(';').map(s => s.trim());
         if (row.bai_thuoc) baseData.bai_thuoc = row.bai_thuoc.split(';').map(s => s.trim());
-        if (row.tac_dung_duoc_ly) baseData.tac_dung_duoc_ly = row.tac_dung_duoc_ly.split(';').map(s => s.trim());
         if (row.kinh_do) baseData.kinh_do = (typeof row.kinh_do === 'string' ? row.kinh_do.split(';') : [row.kinh_do]).map(s => parseFloat(s.toString().trim()));
         if (row.vi_do) baseData.vi_do = (typeof row.vi_do === 'string' ? row.vi_do.split(';') : [row.vi_do]).map(s => parseFloat(s.toString().trim()));
         if (row.id_vung_phan_bo) baseData.id_vung_phan_bo = (typeof row.id_vung_phan_bo === 'string' ? row.id_vung_phan_bo.split(';') : [row.id_vung_phan_bo]).map(s => parseInt(s.toString().trim()));

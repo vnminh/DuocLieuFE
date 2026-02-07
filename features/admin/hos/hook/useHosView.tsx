@@ -22,6 +22,7 @@ export function useHosView() {
         limit: 10
     });
     const [searchInput, setSearchInput] = useState('');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -78,7 +79,7 @@ export function useHosView() {
                 fetchHos();
             } catch (error) {
                 console.error('Error deleting ho:', error);
-                alert('Failed to delete ho');
+                setErrorMessage('Failed to delete ho');
             }
         }
     };
@@ -122,5 +123,7 @@ export function useHosView() {
         showModal,
         editingHo,
         isViewMode,
+        errorMessage,
+        setErrorMessage,
     }
 }

@@ -18,7 +18,8 @@ export function useVungPhanBoView() {
         limit: 10,
     });
     const [searchInput, setSearchInput] = useState('');
-    
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     useEffect(() => {
         const timer = setTimeout(() => {
             setFilters(prev => ({ ...prev, search: searchInput, page: 1 }));
@@ -70,7 +71,7 @@ export function useVungPhanBoView() {
                 fetchVungPhanBos();
             } catch (error) {
                 console.error('Error deleting vung phan bo:', error);
-                alert('Failed to delete vung phan bo');
+                setErrorMessage('Failed to delete vung phan bo');
             }
         }
     };
@@ -103,5 +104,7 @@ export function useVungPhanBoView() {
         showModal,
         editingVungPhanBo,
         isViewMode,
+        errorMessage,
+        setErrorMessage,
     }
 }

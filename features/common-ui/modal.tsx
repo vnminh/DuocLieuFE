@@ -28,7 +28,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
         className
       )}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-6">
           <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
           <Button
             variant="ghost"

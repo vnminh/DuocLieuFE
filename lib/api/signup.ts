@@ -24,7 +24,7 @@ export interface SignupResponse {
 
 /**
  * Register a new user
- * Endpoint: POST /users/user
+ * Endpoint: POST /users/signup
  */
 export async function signup(data: SignupRequest): Promise<User> {
   try {
@@ -44,7 +44,7 @@ export async function signup(data: SignupRequest): Promise<User> {
       date_of_birth: data.date_of_birth ? new Date(data.date_of_birth) : undefined,
     };
 
-    const response = await apiPost<any>('/users/user', signupData);
+    const response = await apiPost<any>('/users/signup', signupData);
 
     const user = response.data || response;
 

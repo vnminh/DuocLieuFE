@@ -5,6 +5,7 @@ import { Button } from '@/features/common-ui/button';
 import { Badge } from '@/features/common-ui/badge';
 import { Loai } from '@/types/loais';
 import { Eye, Edit, Trash2, MapPin, Calendar } from 'lucide-react';
+import { usePermissions } from '@/lib/permissions';
 
 interface LoaiCardProps {
   loai: Loai;
@@ -15,6 +16,7 @@ interface LoaiCardProps {
 }
 
 export function LoaiCard({ loai, onView, onEdit, onDelete, formatDate }: LoaiCardProps) {
+  const { canEdit, canDelete } = usePermissions();
   const getMucDoQuyHiemBadge = (mucDo: string | undefined) => {
     switch (mucDo) {
       case 'RAT_CAO':
@@ -29,9 +31,9 @@ export function LoaiCard({ loai, onView, onEdit, onDelete, formatDate }: LoaiCar
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full flex flex-col">
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
       {/* Card Header */}
-      <div className="p-4 border-b bg-gray-50">
+      <div className="p-4 bg-gray-50">
         <h3 className="font-semibold text-gray-900 text-lg truncate" title={loai.ten_khoa_hoc}>
           {loai.ten_khoa_hoc}
         </h3>
@@ -83,18 +85,22 @@ export function LoaiCard({ loai, onView, onEdit, onDelete, formatDate }: LoaiCar
       </div>
 
       {/* Card Footer - Actions */}
-      <div className="p-4 border-t bg-gray-50 flex justify-end space-x-2 mt-auto">
+      <div className="p-4 bg-gray-50 flex justify-end space-x-2 mt-auto">
         <Button size="sm" variant="secondary" onClick={() => onView(loai)}>
           <Eye className="w-4 h-4 mr-1" />
           View
         </Button>
-        <Button size="sm" variant="primary" onClick={() => onEdit(loai)}>
-          <Edit className="w-4 h-4 mr-1" />
-          Edit
-        </Button>
-        <Button size="sm" variant="danger" onClick={() => onDelete(loai.id)}>
-          <Trash2 className="w-4 h-4" />
-        </Button>
+        {canEdit && (
+          <Button size="sm" variant="primary" onClick={() => onEdit(loai)}>
+            <Edit className="w-4 h-4 mr-1" />
+            Edit
+          </Button>
+        )}
+        {canDelete && (
+          <Button size="sm" variant="danger" onClick={() => onDelete(loai.id)}>
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        )}
       </div>
     </div>
   );

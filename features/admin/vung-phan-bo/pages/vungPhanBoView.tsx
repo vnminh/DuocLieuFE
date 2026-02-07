@@ -8,8 +8,11 @@ import { Pagination } from '@/features/common-ui/pagination';
 import { VungPhanBoFormModal } from '@/features/admin/vung-phan-bo/component/VungPhanBoFormModal';
 import { useVungPhanBoView } from '../hook/useVungPhanBoView';
 import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { usePermissions } from '@/lib/permissions';
+import { ErrorModal } from '@/features/common-ui/error-modal';
 
 export default function VungPhanBoView() {
+  const { canEdit, canDelete, canAdd } = usePermissions();
   const {
     handleCreateVungPhanBo,
     setSearchInput,
@@ -29,6 +32,8 @@ export default function VungPhanBoView() {
     showModal,
     editingVungPhanBo,
     isViewMode,
+    errorMessage,
+    setErrorMessage,
   } = useVungPhanBoView();
 
   return (
@@ -39,14 +44,16 @@ export default function VungPhanBoView() {
           <h1 className="text-3xl font-bold text-gray-900">Vùng Phân Bố Management</h1>
           <p className="text-gray-600 mt-1">Manage distribution regions</p>
         </div>
-        <Button onClick={handleCreateVungPhanBo}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Vùng Phân Bố
-        </Button>
+        {canAdd && (
+          <Button onClick={handleCreateVungPhanBo}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Vùng Phân Bố
+          </Button>
+        )}
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border">
+      <div className="bg-white p-4 rounded-lg shadow-sm">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <Input
@@ -68,7 +75,7 @@ export default function VungPhanBoView() {
       </div>
 
       {/* Table */}
-      <div className="bg-white shadow-sm border rounded-lg overflow-hidden">
+      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -80,9 +87,6 @@ export default function VungPhanBoView() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ID
-                    </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Administrative Region
                     </th>
@@ -103,11 +107,6 @@ export default function VungPhanBoView() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {vungPhanBos.map((vungPhanBo) => (
                     <tr key={vungPhanBo.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {vungPhanBo.id}
-                        </div>
-                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
                           {vungPhanBo.ten_dia_phan_hanh_chinh}
@@ -135,22 +134,26 @@ export default function VungPhanBoView() {
                           <Eye className="w-4 h-4 mr-1" />
                           View
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          onClick={() => handleEditVungPhanBo(vungPhanBo)}
-                        >
-                          <Edit className="w-4 h-4 mr-1" />
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="danger"
-                          onClick={() => handleDeleteVungPhanBo(vungPhanBo.id)}
-                        >
-                          <Trash2 className="w-4 h-4 mr-1" />
-                          Delete
-                        </Button>
+                        {canEdit && (
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={() => handleEditVungPhanBo(vungPhanBo)}
+                          >
+                            <Edit className="w-4 h-4 mr-1" />
+                            Edit
+                          </Button>
+                        )}
+                        {canDelete && (
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => handleDeleteVungPhanBo(vungPhanBo.id)}
+                          >
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Delete
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -186,6 +189,12 @@ export default function VungPhanBoView() {
         onSuccess={handleModalSuccess}
         vungPhanBo={editingVungPhanBo}
         viewMode={isViewMode}
+      />
+
+      <ErrorModal
+        isOpen={!!errorMessage}
+        onClose={() => setErrorMessage(null)}
+        message={errorMessage || ''}
       />
     </div>
   );

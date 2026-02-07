@@ -3,7 +3,17 @@
  * Provides base URL configuration and error handling
  */
 
+import { cookieStorage } from '@/lib/cookieStorage';
+
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001';
+
+function getRoleHeader(): Record<string, string> {
+  const user = cookieStorage.getUser();
+  if (user?.role) {
+    return { 'X-User-Role': user.role };
+  }
+  return {};
+}
 
 export interface APIResponse<T = any> {
   message: string;
@@ -36,6 +46,7 @@ export async function apiGet<T = any>(
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      ...getRoleHeader(),
       ...options?.headers,
     },
     ...options,
@@ -52,12 +63,12 @@ export async function apiPost<T = any>(
   body?: any,
   options?: RequestInit
 ): Promise<T> {
-  console.log(body ? JSON.stringify(body) : undefined)
   const url = `${BASE_URL}${endpoint}`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      ...getRoleHeader(),
       ...options?.headers,
     },
     body: body ? JSON.stringify(body) : undefined,
@@ -80,6 +91,7 @@ export async function apiPut<T = any>(
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      ...getRoleHeader(),
       ...options?.headers,
     },
     body: body ? JSON.stringify(body) : undefined,
@@ -101,6 +113,7 @@ export async function apiDelete<T = any>(
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
+      ...getRoleHeader(),
       ...options?.headers,
     },
     ...options,
@@ -120,6 +133,10 @@ export async function apiPostFormData<T = any>(
   const url = `${BASE_URL}${endpoint}`;
   const response = await fetch(url, {
     method: 'POST',
+    headers: {
+      ...getRoleHeader(),
+      ...options?.headers,
+    },
     body: formData,
     ...options,
   });

@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { loadMapData, loadLoaisWithCoordinates } from '@/lib/api/loai-map';
+import { getLoaiById } from '@/lib/api/loais';
 import {
   VungPhanBoMapData,
   LoaiWithCoordinates,
 } from '../types/loai-map';
+import { Loai } from '@/types/loais';
 
 // Default center for Vietnam
 export const VIETNAM_CENTER: [number, number] = [14.0, 108.0]; // [lat, lng] for Leaflet
@@ -18,6 +20,11 @@ export function useLoaiMapView() {
   const [selectedLoai, setSelectedLoai] = useState<LoaiWithCoordinates | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingLoais, setLoadingLoais] = useState(false);
+
+  // Modal states for loai detail
+  const [showLoaiModal, setShowLoaiModal] = useState(false);
+  const [viewingLoai, setViewingLoai] = useState<Loai | null>(null);
+  const [loadingLoaiDetail, setLoadingLoaiDetail] = useState(false);
 
   // Load initial map data
   useEffect(() => {
@@ -66,6 +73,27 @@ export function useLoaiMapView() {
     setSelectedLoai(null);
   }, []);
 
+  // Handle viewing loai detail (fetch full loai data and show modal)
+  const handleViewLoaiDetail = useCallback(async (loai: LoaiWithCoordinates) => {
+    setLoadingLoaiDetail(true);
+    try {
+      console.log('[DEBUG] LoaiId clicked', loai.id)
+      const fullLoai = await getLoaiById(loai.id);
+      setViewingLoai(fullLoai);
+      setShowLoaiModal(true);
+    } catch (error) {
+      console.error('Error loading loai detail:', error);
+    } finally {
+      setLoadingLoaiDetail(false);
+    }
+  }, []);
+
+  // Close loai modal
+  const closeLoaiModal = useCallback(() => {
+    setShowLoaiModal(false);
+    setViewingLoai(null);
+  }, []);
+
   return {
     vungPhanBos,
     selectedVungPhanBo,
@@ -76,5 +104,11 @@ export function useLoaiMapView() {
     handleSelectVungPhanBo,
     handleSelectLoai,
     closePopup,
+    // Modal states
+    showLoaiModal,
+    viewingLoai,
+    loadingLoaiDetail,
+    handleViewLoaiDetail,
+    closeLoaiModal,
   };
 }

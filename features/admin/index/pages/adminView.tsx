@@ -14,7 +14,7 @@ export default function AdminView(){
                     const Icon = route.icon;
                     return (
                         <Link key={route.href} href={route.href} className="block">
-                            <div className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow flex items-center space-x-4">
+                            <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center space-x-4">
                                 <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-800 dark:text-gray-100">
                                     <Icon className="w-6 h-6" />
                                 </div>

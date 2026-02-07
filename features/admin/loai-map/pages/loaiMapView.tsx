@@ -5,12 +5,13 @@ import dynamic from 'next/dynamic';
 import { useLoaiMapView } from '../hook/useLoaiMapView';
 import { Select } from '@/features/common-ui/select';
 import { Badge } from '@/features/common-ui/badge';
-import { MapPin, Leaf, AlertTriangle } from 'lucide-react';
+import { LoaiFormModal } from '@/features/admin/loais/component/LoaiFormModal';
+import { MapPin, Trees, AlertTriangle } from 'lucide-react';
 
 // Dynamic import of Mapbox map component (SSR disabled)
 const MapboxMap = dynamic(
   () => import('../component/MapboxMap'),
-  { 
+  {
     ssr: false,
     loading: () => (
       <div className="w-full h-full min-h-[400px] flex items-center justify-center bg-gray-100 rounded-lg">
@@ -33,6 +34,11 @@ export default function LoaiMapView() {
     loadingLoais,
     handleSelectVungPhanBo,
     handleSelectLoai,
+    // Modal states
+    showLoaiModal,
+    viewingLoai,
+    handleViewLoaiDetail,
+    closeLoaiModal,
   } = useLoaiMapView();
 
   const getMucDoQuyHiemBadge = (mucDo: string | undefined) => {
@@ -71,7 +77,7 @@ export default function LoaiMapView() {
         {/* Left Column - Map and Select (3/4 width) */}
         <div className="lg:col-span-3 flex flex-col gap-4">
           {/* Vung Phan Bo Select */}
-          <div className="bg-white p-4 rounded-lg shadow-sm border">
+          <div className="bg-white p-4 rounded-lg shadow-sm">
             <Select
               label="Select Distribution Zone"
               value={selectedVungPhanBo?.id?.toString() || ''}
@@ -91,7 +97,7 @@ export default function LoaiMapView() {
           </div>
 
           {/* Map Container */}
-          <div className="flex-1 bg-white rounded-lg shadow-sm border overflow-hidden relative">
+          <div className="flex-1 bg-white rounded-lg shadow-sm overflow-hidden relative">
             <MapboxMap
               vungPhanBos={vungPhanBos}
               selectedVungPhanBo={selectedVungPhanBo}
@@ -99,10 +105,11 @@ export default function LoaiMapView() {
               selectedLoai={selectedLoai}
               onSelectVungPhanBo={handleSelectVungPhanBo}
               onSelectLoai={handleSelectLoai}
+              onViewLoaiDetail={handleViewLoaiDetail}
             />
 
             {/* Legend */}
-            <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg border p-3 z-[1000]">
+            <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-3 z-[1000]">
               <h4 className="font-semibold text-gray-900 text-sm mb-2">Mức độ quý hiếm</h4>
               <div className="space-y-1 text-xs">
                 <div className="flex items-center gap-2">
@@ -127,10 +134,10 @@ export default function LoaiMapView() {
         </div>
 
         {/* Right Column - Loais Sidebar (1/4 width) */}
-        <div className="lg:col-span-1 bg-white rounded-lg shadow-sm border overflow-hidden flex flex-col">
-          <div className="p-4 border-b bg-gray-50">
+        <div className="lg:col-span-1 bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
+          <div className="p-4 bg-gray-50">
             <div className="flex items-center gap-2">
-              <Leaf className="w-5 h-5 text-green-600" />
+              <Trees className="w-5 h-5 text-green-600" />
               <h3 className="font-semibold text-gray-900">
                 Loais in Zone
               </h3>
@@ -195,7 +202,7 @@ export default function LoaiMapView() {
           </div>
 
           {selectedVungPhanBo && loais.length > 0 && (
-            <div className="p-3 border-t bg-gray-50 text-center">
+            <div className="p-3 bg-gray-50 text-center">
               <span className="text-sm text-gray-600">
                 Total: {loais.length} loais
               </span>
@@ -203,6 +210,15 @@ export default function LoaiMapView() {
           )}
         </div>
       </div>
+
+      {/* Loai Detail Modal */}
+      <LoaiFormModal
+        isOpen={showLoaiModal}
+        onClose={closeLoaiModal}
+        onSuccess={closeLoaiModal}
+        loai={viewingLoai}
+        viewMode={true}
+      />
     </div>
   );
 }

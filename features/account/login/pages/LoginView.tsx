@@ -46,9 +46,6 @@ export default function LoginView() {
               disabled={isLoading}
               error={errors.email}
             />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
           </div>
 
           {/* Password Input */}
@@ -63,9 +60,6 @@ export default function LoginView() {
               disabled={isLoading}
               error={errors.password}
             />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-            )}
           </div>
 
           {/* Remember Me & Forgot Password */}

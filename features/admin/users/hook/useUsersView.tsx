@@ -19,6 +19,7 @@ export function useUsersView() {
         limit: 10
     });
     const [searchInput, setSearchInput] = useState('');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     useEffect(() => {
         const timer = setTimeout(() => {
             setFilters(prev => ({ ...prev, search: searchInput, page: 1 }));
@@ -71,7 +72,7 @@ export function useUsersView() {
                 fetchUsers();
             } catch (error) {
                 console.error('Error deleting user:', error);
-                alert('Failed to delete user');
+                setErrorMessage('Failed to delete user');
             }
         }
     };
@@ -82,7 +83,7 @@ export function useUsersView() {
             fetchUsers();
         } catch (error) {
             console.error('Error toggling user block:', error);
-            alert('Failed to update user status');
+            setErrorMessage('Failed to update user status');
         }
     };
 
@@ -141,5 +142,7 @@ export function useUsersView() {
         showModal,
         editingUser,
         isViewMode,
+        errorMessage,
+        setErrorMessage,
     }
 }

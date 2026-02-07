@@ -26,7 +26,6 @@ export function useSignupView() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [signupError, setSignupError] = useState<string | null>(null);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const validateForm = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
@@ -61,13 +60,10 @@ export function useSignupView() {
       newErrors.confirm_password = 'Passwords do not match';
     }
 
-    if (!agreedToTerms) {
-      newErrors.terms = 'You must agree to the terms and conditions';
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [formData, agreedToTerms]);
+  }, [formData]);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -99,8 +95,8 @@ export function useSignupView() {
       setIsLoading(true);
       try {
         await signup(formData);
-        // Redirect to dashboard or welcome page
-        router.push('/admin/users');
+        // Redirect to search page (default page for USER role)
+        router.push('/admin/search');
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Signup failed';
         setSignupError(message);
@@ -121,10 +117,8 @@ export function useSignupView() {
     errors,
     isLoading,
     signupError,
-    agreedToTerms,
     handleInputChange,
     handleSignup,
-    setAgreedToTerms,
     setFormData,
     setSignupError,
   };

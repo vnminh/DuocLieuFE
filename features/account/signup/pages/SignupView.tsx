@@ -13,10 +13,8 @@ export default function SignupView() {
     errors,
     isLoading,
     signupError,
-    agreedToTerms,
     handleInputChange,
     handleSignup,
-    setAgreedToTerms,
   } = useSignupView();
 
   return (
@@ -49,9 +47,6 @@ export default function SignupView() {
               disabled={isLoading}
               error={errors.full_name}
             />
-            {errors.full_name && (
-              <p className="text-red-500 text-sm mt-1">{errors.full_name}</p>
-            )}
           </div>
 
           {/* Email Address */}
@@ -66,9 +61,6 @@ export default function SignupView() {
               disabled={isLoading}
               error={errors.email}
             />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
           </div>
 
           {/* Password */}
@@ -83,9 +75,6 @@ export default function SignupView() {
               disabled={isLoading}
               error={errors.password}
             />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-            )}
             <p className="text-xs text-gray-500 mt-2">
               Password must contain uppercase, lowercase, number (min 8 chars)
             </p>
@@ -103,11 +92,6 @@ export default function SignupView() {
               disabled={isLoading}
               error={errors.confirm_password}
             />
-            {errors.confirm_password && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.confirm_password}
-              </p>
-            )}
           </div>
 
           {/* Optional Fields */}
@@ -156,36 +140,6 @@ export default function SignupView() {
             />
           </div>
 
-          {/* Terms Checkbox */}
-          <div className="flex items-start">
-            <input
-              type="checkbox"
-              id="terms"
-              checked={agreedToTerms}
-              onChange={(e) => setAgreedToTerms(e.target.checked)}
-              className="w-4 h-4 mt-1 rounded"
-              disabled={isLoading}
-            />
-            <label htmlFor="terms" className="ml-2 text-sm text-gray-700">
-              I agree to the{' '}
-              <Link
-                href="/terms"
-                className="text-blue-600 hover:underline font-medium"
-              >
-                Terms and Conditions
-              </Link>
-              {' '}and{' '}
-              <Link
-                href="/privacy"
-                className="text-blue-600 hover:underline font-medium"
-              >
-                Privacy Policy
-              </Link>
-            </label>
-          </div>
-          {errors.terms && (
-            <p className="text-red-500 text-sm">{errors.terms}</p>
-          )}
 
           {/* Submit Button */}
           <Button

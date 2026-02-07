@@ -58,6 +58,15 @@ export async function deleteUser(id: number): Promise<void> {
 }
 
 /**
+ * User signup
+ * Endpoint: POST /users/signup
+ */
+export async function signupUser(data: CreateUserData): Promise<User> {
+  const response = await apiPost<any>('/users/signup', data);
+  return response.data || response;
+}
+
+/**
  * User login
  * Endpoint: POST /users/login
  */
@@ -103,6 +112,54 @@ export async function verifyCode(
     verification_code,
     purpose,
   });
+  return response.data || response;
+}
+
+/**
+ * Get user profile by ID
+ * Endpoint: GET /users/user/:id
+ */
+export async function getUserProfile(id: number): Promise<User> {
+  const response = await apiGet<any>(`/users/user/${id}`);
+  return response.data || response;
+}
+
+/**
+ * Update user profile (for settings page)
+ * Endpoint: PUT /users/user/:id
+ */
+export async function updateUserProfile(id: number, data: {
+  full_name?: string;
+  email?: string;
+  address?: string;
+  date_of_birth?: string;
+  gender?: string;
+}): Promise<User> {
+  const response = await apiPut<any>(`/users/user/${id}`, data);
+  return response.data || response;
+}
+
+/**
+ * Change user password
+ * Endpoint: PUT /users/user/:id
+ */
+export async function changePassword(id: number, data: {
+  old_password: string;
+  new_password: string;
+}): Promise<User> {
+  const response = await apiPut<any>(`/users/user/${id}`, data);
+  return response.data || response;
+}
+
+/**
+ * Reset password (sends new random password to email)
+ * Endpoint: POST /users/reset-password
+ */
+export async function resetPassword(email: string): Promise<{
+  email: string;
+  emailSent: boolean;
+}> {
+  const response = await apiPost<any>('/users/reset-password', { email });
   return response.data || response;
 }
 

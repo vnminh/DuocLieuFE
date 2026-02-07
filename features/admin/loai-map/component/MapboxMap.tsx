@@ -26,6 +26,7 @@ interface MapboxMapProps {
   selectedLoai: LoaiWithCoordinates | null;
   onSelectVungPhanBo: (vung: VungPhanBoMapData | null) => void;
   onSelectLoai: (loai: LoaiWithCoordinates | null) => void;
+  onViewLoaiDetail?: (loai: LoaiWithCoordinates) => void;
 }
 
 function MapboxMapComponent({
@@ -35,11 +36,13 @@ function MapboxMapComponent({
   selectedLoai,
   onSelectVungPhanBo,
   onSelectLoai,
+  onViewLoaiDetail,
 }: MapboxMapProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const popupRef = useRef<mapboxgl.Popup | null>(null);
+  const loaisMapRef = useRef<Map<number, LoaiWithCoordinates>>(new Map());
 
   // Initialize map
   useEffect(() => {
@@ -262,10 +265,16 @@ function MapboxMapComponent({
     markersRef.current.forEach(marker => marker.remove());
     markersRef.current = [];
 
+    // Store loais in ref for event handling
+    loaisMapRef.current.clear();
+    loais.forEach((loai) => {
+      loaisMapRef.current.set(loai.id, loai);
+    });
+
     loais.forEach((loai) => {
       loai.vi_tri_dia_li.forEach((viTri) => {
         const color = RARITY_COLORS[loai.dac_diem_sinh_hoc?.muc_do_quy_hiem || 'THAP'];
-        
+
         // Create custom marker element
         const el = document.createElement('div');
         el.className = 'mapbox-marker';
@@ -277,16 +286,48 @@ function MapboxMapComponent({
         el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
         el.style.cursor = 'pointer';
 
-        // Create popup content
         const popupContent = `
-          <div class="p-2">
-            <h4 class="font-semibold text-gray-900 text-sm">${loai.ten_khoa_hoc}</h4>
-            ${loai.ten_tieng_viet ? `<p class="text-xs text-gray-600">${loai.ten_tieng_viet}</p>` : ''}
-            <p class="text-xs mt-1">
-              <span class="inline-block px-2 py-0.5 rounded-full text-white text-xs" style="background-color: ${color}">
-                ${getRarityLabel(loai.dac_diem_sinh_hoc?.muc_do_quy_hiem)}
-              </span>
-            </p>
+          <div class="min-w-[200px]">
+            <div class="p-3 bg-gray-50 flex justify-between items-start">
+              <div>
+                <h4 class="font-semibold text-gray-900 text-sm">${loai.ten_khoa_hoc}</h4>
+                ${loai.ten_tieng_viet ? `<p class="text-xs text-gray-600">${loai.ten_tieng_viet}</p>` : ''}
+              </div>
+              <button
+                class="loai-detail-btn px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                data-loai-id="${loai.id}"
+              >
+                View Detail
+              </button>
+            </div>
+
+            <div class="p-3 space-y-2">
+              ${loai.ten_goi_khac ? `
+                <div>
+                  <span class="text-xs text-gray-500">Alternative Name:</span>
+                  <p class="text-xs text-gray-700">${loai.ten_goi_khac}</p>
+                </div>
+              ` : ''}
+
+              <div class="flex flex-wrap gap-1">
+                <span class="inline-block px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs">${loai.ten_ho_khoa_hoc}</span>
+                ${loai.ho?.nganh?.ten_khoa_hoc ? `<span class="inline-block px-2 py-0.5 rounded-full bg-green-100 text-green-800 text-xs">${loai.ho.nganh.ten_khoa_hoc}</span>` : ''}
+              </div>
+
+              <div>
+                <span class="inline-block px-2 py-0.5 rounded-full text-white text-xs" style="background-color: ${color}">
+                  Rarity: ${getRarityLabel(loai.dac_diem_sinh_hoc?.muc_do_quy_hiem)}
+                </span>
+              </div>
+
+              <div class="flex items-center text-xs text-gray-600">
+                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                ${loai.vi_tri_dia_li.length} location(s)
+              </div>
+            </div>
           </div>
         `;
 
@@ -295,20 +336,35 @@ function MapboxMapComponent({
           className: 'loai-popup',
         }).setHTML(popupContent);
 
+        // Handle click on "View Detail" button inside popup
+        popup.on('open', () => {
+          setTimeout(() => {
+            const detailBtn = document.querySelector(`.loai-detail-btn[data-loai-id="${loai.id}"]`);
+            if (detailBtn) {
+              detailBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (onViewLoaiDetail) {
+                  onViewLoaiDetail(loai);
+                }
+              });
+            }
+          }, 0);
+        });
+
         const marker = new mapboxgl.Marker(el)
           .setLngLat([viTri.kinh_do, viTri.vi_do])
           .setPopup(popup)
           .addTo(map);
 
         // Handle click on marker
-        el.addEventListener('click', () => {
+        el.addEventListener('click', (e) => {
           onSelectLoai(loai);
         });
 
         markersRef.current.push(marker);
       });
     });
-  }, [loais, onSelectLoai]);
+  }, [loais, onSelectLoai, onViewLoaiDetail]);
 
   // Zoom to selected loai
   useEffect(() => {

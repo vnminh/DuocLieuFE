@@ -1,8 +1,8 @@
 'use client'
 
-import { getLoaiDetail, getLoaiImageCount, getLoaiImageUrl } from '@/lib/api/loais';
+import { getLoaiDetail, getLoaiImageUrl, uploadLoaiPreviewImage, deleteLoaiPreviewImage } from '@/lib/api/loais-detail';
 import { Loai } from '@/types/loais';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export function useLoaisDetailView() {
@@ -14,9 +14,12 @@ export function useLoaisDetailView() {
   const [imageCount, setImageCount] = useState(0);
   const [collectionUri, setCollectionUri] = useState('');
   const [loading, setLoading] = useState(true);
-  const [loadingImages, setLoadingImages] = useState(false);
-  const [imageLoadStates, setImageLoadStates] = useState<Record<number, 'loading' | 'loaded' | 'error'>>({});
+  const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState<number | null>(null);
+  const [imageStatus, setImageStatus] = useState<Record<number, boolean>>({});
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,15 +29,11 @@ export function useLoaisDetailView() {
         const loaiData = await getLoaiDetail(loaiId);
         setLoai(loaiData);
 
-        const imageData = await getLoaiImageCount(loaiId);
-        setImageCount(imageData.count);
-        setCollectionUri(imageData.collection_uri);
-
-        const initialLoadStates: Record<number, 'loading' | 'loaded' | 'error'> = {};
-        for (let i = 0; i < imageData.count; i++) {
-          initialLoadStates[i] = 'loading';
-        }
-        setImageLoadStates(initialLoadStates);
+        const count = loaiData.hinh_anh?.so_luong_anh_preview ?? 0;
+        const uri = loaiData.hinh_anh?.collection_uri ?? '';
+        setImageCount(count);
+        setCollectionUri(uri);
+        setImageStatus({});
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -47,30 +46,25 @@ export function useLoaisDetailView() {
     }
   }, [loaiId]);
 
-  const handleImageLoad = (index: number) => {
-    setImageLoadStates(prev => ({ ...prev, [index]: 'loaded' }));
-  };
-
   const handleImageError = (index: number) => {
-    setImageLoadStates(prev => ({ ...prev, [index]: 'error' }));
+    setImageStatus(prev => ({ ...prev, [index]: false }));
   };
 
   const handleRefresh = async () => {
-    setLoadingImages(true);
+    setLoading(true);
     try {
-      const imageData = await getLoaiImageCount(loaiId);
-      setImageCount(imageData.count);
-      setCollectionUri(imageData.collection_uri);
+      const loaiData = await getLoaiDetail(loaiId);
+      setLoai(loaiData);
 
-      const initialLoadStates: Record<number, 'loading' | 'loaded' | 'error'> = {};
-      for (let i = 0; i < imageData.count; i++) {
-        initialLoadStates[i] = 'loading';
-      }
-      setImageLoadStates(initialLoadStates);
+      const count = loaiData.hinh_anh?.so_luong_anh_preview ?? 0;
+      const uri = loaiData.hinh_anh?.collection_uri ?? '';
+      setImageCount(count);
+      setCollectionUri(uri);
+      setImageStatus({});
     } catch (error) {
-      console.error('Error refreshing images:', error);
+      console.error('Error refreshing:', error);
     } finally {
-      setLoadingImages(false);
+      setLoading(false);
     }
   };
 
@@ -79,7 +73,8 @@ export function useLoaisDetailView() {
   };
 
   const getImageUrl = (index: number) => {
-    return getLoaiImageUrl(loaiId, index);
+    if (!loai) return '';
+    return getLoaiImageUrl(loai.id, index);
   };
 
   const handlePrevImage = (e: React.MouseEvent) => {
@@ -96,16 +91,67 @@ export function useLoaisDetailView() {
     setSelectedImage(null);
   };
 
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !loai) return;
+
+    setUploading(true);
+    try {
+      const result = await uploadLoaiPreviewImage(loai.id, file);
+      setImageCount(result.count);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setErrorMessage('Failed to upload image');
+    } finally {
+      setUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleDeleteImage = async (index: number) => {
+    if (!loai) return;
+
+    if (!confirm(`Are you sure you want to delete image ${index + 1}?`)) {
+      return;
+    }
+
+    setDeleting(index);
+    try {
+      const result = await deleteLoaiPreviewImage(loai.id, index);
+      setImageCount(result.count);
+      setImageStatus({});
+      // Close lightbox if viewing deleted image
+      if (selectedImage === index) {
+        setSelectedImage(null);
+      } else if (selectedImage !== null && selectedImage > index) {
+        setSelectedImage(selectedImage - 1);
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      setErrorMessage('Failed to delete image');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
   return {
     loai,
     imageCount,
     collectionUri,
     loading,
-    loadingImages,
-    imageLoadStates,
+    uploading,
+    deleting,
+    imageStatus,
     selectedImage,
+    fileInputRef,
     setSelectedImage,
-    handleImageLoad,
     handleImageError,
     handleRefresh,
     handleBack,
@@ -113,5 +159,10 @@ export function useLoaisDetailView() {
     handlePrevImage,
     handleNextImage,
     closeLightbox,
+    handleUploadClick,
+    handleFileChange,
+    handleDeleteImage,
+    errorMessage,
+    setErrorMessage,
   };
 }
