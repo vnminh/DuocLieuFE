@@ -297,14 +297,14 @@ function MapboxMapComponent({
                 class="loai-detail-btn px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                 data-loai-id="${loai.id}"
               >
-                View Detail
+                Xem chi tiết
               </button>
             </div>
 
             <div class="p-3 space-y-2">
               ${loai.ten_goi_khac ? `
                 <div>
-                  <span class="text-xs text-gray-500">Alternative Name:</span>
+                  <span class="text-xs text-gray-500">Tên gọi khác:</span>
                   <p class="text-xs text-gray-700">${loai.ten_goi_khac}</p>
                 </div>
               ` : ''}
@@ -316,7 +316,7 @@ function MapboxMapComponent({
 
               <div>
                 <span class="inline-block px-2 py-0.5 rounded-full text-white text-xs" style="background-color: ${color}">
-                  Rarity: ${getRarityLabel(loai.dac_diem_sinh_hoc?.muc_do_quy_hiem)}
+                  Mức độ quý hiếm: ${getRarityLabel(loai.dac_diem_sinh_hoc?.muc_do_quy_hiem)}
                 </span>
               </div>
 
@@ -325,7 +325,7 @@ function MapboxMapComponent({
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
-                ${loai.vi_tri_dia_li.length} location(s)
+                ${loai.vi_tri_dia_li.length} vị trí
               </div>
             </div>
           </div>

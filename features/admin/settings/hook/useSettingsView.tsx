@@ -93,10 +93,10 @@ export function useSettingsView() {
         email,
       });
 
-      setProfileSuccess('Profile updated successfully');
+      setProfileSuccess('Cập nhật thông tin cá nhân thành công');
       setShowConfirmSave(false);
     } catch (error: any) {
-      setProfileError(error?.message || 'Failed to update profile');
+      setProfileError(error?.message || 'Cập nhật thông tin cá nhân thất bại');
       setShowConfirmSave(false);
     } finally {
       setSaving(false);
@@ -111,35 +111,35 @@ export function useSettingsView() {
     setPasswordSuccess('');
 
     if (!currentPassword) {
-      setPasswordError('Current password is required');
+      setPasswordError('Mật khẩu hiện tại là bắt buộc');
       return;
     }
     if (!newPassword) {
-      setPasswordError('New password is required');
+      setPasswordError('Mật khẩu mới là bắt buộc');
       return;
     }
     if (newPassword.length < 8) {
-      setPasswordError('New password must be at least 8 characters');
+      setPasswordError('Mật khẩu mới phải có ít nhất 8 ký tự');
       return;
     }
     if (!/[A-Z]/.test(newPassword)) {
-      setPasswordError('New password must contain at least one uppercase letter');
+      setPasswordError('Mật khẩu mới phải có ít nhất 1 chữ hoa');
       return;
     }
     if (!/[a-z]/.test(newPassword)) {
-      setPasswordError('New password must contain at least one lowercase letter');
+      setPasswordError('Mật khẩu mới phải có ít nhất 1 chữ thường');
       return;
     }
     if (!/[0-9]/.test(newPassword)) {
-      setPasswordError('New password must contain at least one number');
+      setPasswordError('Mật khẩu mới phải có ít nhất 1 chữ số');
       return;
     }
     if (!confirmPassword) {
-      setPasswordError('Please confirm your new password');
+      setPasswordError('Vui lòng xác nhận mật khẩu mới');
       return;
     }
     if (newPassword !== confirmPassword) {
-      setPasswordError('New passwords do not match');
+      setPasswordError('Mật khẩu mới không khớp');
       return;
     }
 
@@ -149,13 +149,13 @@ export function useSettingsView() {
         old_password: currentPassword,
         new_password: newPassword,
       });
-      setPasswordSuccess('Password changed successfully');
+      setPasswordSuccess('Đổi mật khẩu thành công');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       setShowChangePassword(false);
     } catch (error: any) {
-      setPasswordError(error?.message || 'Failed to change password. Please check your current password.');
+      setPasswordError(error?.message || 'Đổi mật khẩu thất bại. Vui lòng kiểm tra lại mật khẩu hiện tại.');
     } finally {
       setChangingPassword(false);
     }
@@ -165,7 +165,7 @@ export function useSettingsView() {
   const handleResetPassword = useCallback(async () => {
     if (!email) return;
 
-    if (!window.confirm('This will send a new random password to your email. Continue?')) {
+    if (!window.confirm('Hệ thống sẽ gửi mật khẩu ngẫu nhiên mới qua email của bạn. Tiếp tục?')) {
       return;
     }
 
@@ -176,9 +176,9 @@ export function useSettingsView() {
 
     try {
       await resetPassword(email);
-      setResetSuccess('A new password has been sent to your email');
+      setResetSuccess('Mật khẩu mới đã được gửi qua email của bạn');
     } catch (error: any) {
-      setPasswordError(error?.message || 'Failed to reset password');
+      setPasswordError(error?.message || 'Đặt lại mật khẩu thất bại');
     } finally {
       setResettingPassword(false);
     }

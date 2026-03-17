@@ -17,7 +17,7 @@ const MapboxMap = dynamic(
       <div className="w-full h-full min-h-[400px] flex items-center justify-center bg-gray-100 rounded-lg">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-          <p className="text-sm text-gray-500">Loading map...</p>
+          <p className="text-sm text-gray-500">Đang tải bản đồ...</p>
         </div>
       </div>
     ),
@@ -66,9 +66,9 @@ export default function LoaiMapView() {
     <div className="space-y-4">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Loai Map View</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Bản đồ loài</h1>
         <p className="text-gray-600 mt-1">
-          View and manage medicinal plant species by distribution zones
+          Xem và quản lý các loài cây dược liệu theo vùng phân bố
         </p>
       </div>
 
@@ -79,7 +79,7 @@ export default function LoaiMapView() {
           {/* Vung Phan Bo Select */}
           <div className="bg-white p-4 rounded-lg shadow-sm">
             <Select
-              label="Select Distribution Zone"
+              label="Chọn vùng phân bố"
               value={selectedVungPhanBo?.id?.toString() || ''}
               onChange={(e) => {
                 const id = parseInt(e.target.value);
@@ -87,10 +87,10 @@ export default function LoaiMapView() {
                 handleSelectVungPhanBo(vung || null);
               }}
             >
-              <option value="">-- Select a zone to view loais --</option>
+              <option value="">-- Chọn vùng để xem danh sách loài --</option>
               {vungPhanBos.map((vung) => (
                 <option key={vung.id} value={vung.id}>
-                  {vung.ten_dia_phan_hanh_chinh} ({vung.loai_count} loais)
+                  {vung.ten_dia_phan_hanh_chinh} ({vung.loai_count} loài)
                 </option>
               ))}
             </Select>
@@ -139,7 +139,7 @@ export default function LoaiMapView() {
             <div className="flex items-center gap-2">
               <Trees className="w-5 h-5 text-green-600" />
               <h3 className="font-semibold text-gray-900">
-                Loais in Zone
+                Loài trong vùng phân bố
               </h3>
             </div>
             {selectedVungPhanBo && (
@@ -154,18 +154,18 @@ export default function LoaiMapView() {
               <div className="p-4 text-center text-gray-500">
                 <MapPin className="w-12 h-12 mx-auto mb-2 text-gray-300" />
                 <p className="text-sm">
-                  Select a distribution zone to view loais
+                  Chọn vùng phân bố cần xem chi tiết
                 </p>
               </div>
             ) : loadingLoais ? (
               <div className="p-4 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-2 text-sm text-gray-600">Loading loais...</p>
+                <p className="mt-2 text-sm text-gray-600">Đang tải các loài...</p>
               </div>
             ) : loais.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
                 <AlertTriangle className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-                <p className="text-sm">No loais found in this zone</p>
+                <p className="text-sm">Không có loài nào trong vùng phân bố được chọn</p>
               </div>
             ) : (
               <ul className="divide-y divide-gray-100">
@@ -188,7 +188,7 @@ export default function LoaiMapView() {
                           </p>
                         )}
                         <p className="text-xs text-gray-400 mt-1">
-                          {loai.vi_tri_dia_li.length} location(s)
+                          {loai.vi_tri_dia_li.length} vị trí
                         </p>
                       </div>
                       <div className="flex-shrink-0">
@@ -204,7 +204,7 @@ export default function LoaiMapView() {
           {selectedVungPhanBo && loais.length > 0 && (
             <div className="p-3 bg-gray-50 text-center">
               <span className="text-sm text-gray-600">
-                Total: {loais.length} loais
+                Tổng: {loais.length} loài
               </span>
             </div>
           )}

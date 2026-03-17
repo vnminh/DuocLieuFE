@@ -56,15 +56,15 @@ export default function SettingsView() {
     <div className="space-y-6 w-full">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600 mt-1">Manage your profile and account settings</p>
+        <h1 className="text-3xl font-bold text-gray-900">Cài đặt</h1>
+        <p className="text-gray-600 mt-1">Quản lý thông tin cá nhân và tài khoản</p>
       </div>
 
       {/* Profile Section */}
       <div className="bg-white rounded-lg shadow-sm">
         <div className="p-6 border-b">
-          <h2 className="text-lg font-semibold text-gray-900">Profile Information</h2>
-          <p className="text-sm text-gray-500 mt-1">Update your personal details</p>
+          <h2 className="text-lg font-semibold text-gray-900">Thông tin cá nhân</h2>
+          <p className="text-sm text-gray-500 mt-1">Cập nhật chi tiết thông tin cá nhân</p>
         </div>
 
         <div className="p-6 space-y-4">
@@ -81,43 +81,43 @@ export default function SettingsView() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Full Name"
+              label="Họ và tên"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Enter your full name"
+              placeholder="Nhập họ và tên"
             />
             <Input
               label="Email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
+              placeholder="Nhập email"
             />
           </div>
 
           <Input
-            label="Address"
+            label="Địa chỉ"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder="Enter your address"
+            placeholder="Nhập địa chỉ"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Date of Birth"
+              label="Ngày sinh"
               type="date"
               value={dateOfBirth}
               onChange={(e) => setDateOfBirth(e.target.value)}
             />
             <Select
-              label="Gender"
+              label="Giới tính"
               value={gender}
               onChange={(e) => setGender(e.target.value)}
             >
-              <option value="">Select gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
+              <option value="">Chọn giới tính</option>
+              <option value="Male">Nam</option>
+              <option value="Female">Nữ</option>
+              <option value="Other">Khác</option>
             </Select>
           </div>
         </div>
@@ -127,18 +127,18 @@ export default function SettingsView() {
           {!showConfirmSave ? (
             <Button onClick={() => setShowConfirmSave(true)}>
               <Save className="w-4 h-4 mr-2" />
-              Save Changes
+              Lưu thay đổi
             </Button>
           ) : (
             <div className="flex items-center space-x-3">
-              <span className="text-sm text-gray-700">Are you sure you want to save?</span>
+              <span className="text-sm text-gray-700">Bạn có chắc chắn muốn lưu thay đổi?</span>
               <Button onClick={handleSaveProfile} disabled={saving}>
                 <Check className="w-4 h-4 mr-1" />
-                {saving ? 'Saving...' : 'Confirm'}
+                {saving ? 'Đang lưu...' : 'Xác nhận'}
               </Button>
               <Button variant="secondary" onClick={() => setShowConfirmSave(false)} disabled={saving}>
                 <X className="w-4 h-4 mr-1" />
-                Cancel
+                Hủy
               </Button>
             </div>
           )}
@@ -148,8 +148,8 @@ export default function SettingsView() {
       {/* Password Section */}
       <div className="bg-white rounded-lg shadow-sm">
         <div className="p-6 border-b">
-          <h2 className="text-lg font-semibold text-gray-900">Password</h2>
-          <p className="text-sm text-gray-500 mt-1">Manage your account password</p>
+          <h2 className="text-lg font-semibold text-gray-900">Mật khẩu</h2>
+          <p className="text-sm text-gray-500 mt-1">Quản lý mật khẩu</p>
         </div>
 
         <div className="p-6 space-y-4">
@@ -177,40 +177,40 @@ export default function SettingsView() {
                 disabled={resettingPassword}
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
-                {resettingPassword ? 'Sending...' : 'Reset Password'}
+                {resettingPassword ? 'Đang gửi...' : 'Đặt lại mật khẩu'}
               </Button>
               <Button onClick={() => setShowChangePassword(true)}>
                 <KeyRound className="w-4 h-4 mr-2" />
-                Change Password
+                Thay đổi mật khẩu
               </Button>
             </div>
           ) : (
             <div className="space-y-4">
               <Input
-                label="Current Password"
+                label="Mật khẩu hiện tại"
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Enter current password"
+                placeholder="Nhập mật khẩu hiện tại"
               />
               <Input
-                label="New Password"
+                label="Mật khẩu mới"
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Enter new password"
+                placeholder="Nhập mật khẩu mới"
               />
               <Input
-                label="Confirm New Password"
+                label="Xác nhận mật khẩu mới"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm new password"
+                placeholder="Nhập lại mật khẩu mới"
               />
               <div className="flex items-center space-x-3">
                 <Button onClick={handleChangePassword} disabled={changingPassword}>
                   <Save className="w-4 h-4 mr-2" />
-                  {changingPassword ? 'Saving...' : 'Save Password'}
+                  {changingPassword ? 'Đang lưu...' : 'Lưu mật khẩu'}
                 </Button>
                 <Button
                   variant="secondary"
@@ -218,7 +218,7 @@ export default function SettingsView() {
                   disabled={changingPassword}
                 >
                   <X className="w-4 h-4 mr-2" />
-                  Cancel
+                  Hủy
                 </Button>
               </div>
             </div>
