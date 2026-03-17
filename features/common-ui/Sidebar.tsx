@@ -93,7 +93,7 @@ export function Sidebar({ className, isExpanded = true }: SidebarProps) {
           {isExpanded && (
             <div className="ml-3 overflow-hidden">
               <p className="text-sm font-medium text-white whitespace-nowrap">
-                {user?.full_name || 'User'}
+                {user?.full_name || 'Người dùng'}
               </p>
               <p className="text-xs text-gray-400 whitespace-nowrap">
                 {role}

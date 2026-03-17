@@ -44,7 +44,7 @@ export function useHosView() {
             setTotal(response.total);
             if (response.pages) setTotalPages(response.pages);
         } catch (error) {
-            console.error('Error loading hos:', error);
+            console.error('Lỗi khi tải danh sách họ:', error);
         } finally {
             setLoading(false);
         }
@@ -73,13 +73,13 @@ export function useHosView() {
     };
 
     const handleDeleteHo = async (hoId: number) => {
-        if (window.confirm('Are you sure you want to delete this ho?')) {
+        if (window.confirm('Bạn có chắc chắn muốn xóa họ này?')) {
             try {
                 await deleteHo(hoId);
                 fetchHos();
             } catch (error) {
-                console.error('Error deleting ho:', error);
-                setErrorMessage('Failed to delete ho');
+                console.error('Lỗi khi xóa họ:', error);
+                setErrorMessage('Xóa họ thất bại');
             }
         }
     };

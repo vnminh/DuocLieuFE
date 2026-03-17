@@ -21,8 +21,8 @@ export default function LoginView() {
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Login</h1>
-          <p className="text-gray-600 mt-2">Welcome back to Dược Liệu</p>
+          <h1 className="text-3xl font-bold text-gray-900">Đăng nhập</h1>
+          <p className="text-gray-600 mt-2">Chào mừng bạn quay trở lại</p>
         </div>
 
         {/* Error Message */}
@@ -37,7 +37,7 @@ export default function LoginView() {
           {/* Email Input */}
           <div>
             <Input
-              label="Email Address"
+              label="Địa chỉ Email"
               type="email"
               name="email"
               value={formData.email}
@@ -51,7 +51,7 @@ export default function LoginView() {
           {/* Password Input */}
           <div>
             <Input
-              label="Password"
+              label="Mật khẩu"
               type="password"
               name="password"
               value={formData.password}
@@ -66,13 +66,13 @@ export default function LoginView() {
           <div className="flex items-center justify-between">
             <label className="flex items-center">
               <input type="checkbox" className="w-4 h-4 rounded" />
-              <span className="ml-2 text-sm text-gray-700">Remember me</span>
+              <span className="ml-2 text-sm text-gray-700">Ghi nhớ đăng nhập</span>
             </label>
             <Link
               href="/account/forgot-password"
               className="text-sm text-blue-600 hover:text-blue-700 font-medium"
             >
-              Forgot password?
+              Quên mật khẩu?
             </Link>
           </div>
 
@@ -85,10 +85,10 @@ export default function LoginView() {
             {isLoading ? (
               <span className="flex items-center justify-center">
                 <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span>
-                Logging in...
+                Đang đăng nhập...
               </span>
             ) : (
-              'Login'
+              'Đăng nhập'
             )}
           </Button>
         </form>
@@ -96,12 +96,12 @@ export default function LoginView() {
         {/* Sign Up Link */}
         <div className="mt-6 pt-6 border-t border-gray-200 text-center">
           <p className="text-gray-600 text-sm">
-            Don't have an account?{' '}
+            Bạn chưa có tài khoản?{' '}
             <Link
               href="/account/signup"
               className="text-blue-600 hover:text-blue-700 font-semibold"
             >
-              Sign up here
+              Đăng ký tại đây
             </Link>
           </p>
         </div>

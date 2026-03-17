@@ -44,13 +44,13 @@ export default function HosView() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Ho Management</h1>
-          <p className="text-gray-600 mt-1">Manage taxonomic families (hos)</p>
+          <h1 className="text-3xl font-bold text-gray-900">Quản lý Họ</h1>
+          <p className="text-gray-600 mt-1">Quản lý các họ thực vật</p>
         </div>
         {canAdd && (
           <Button onClick={handleCreateHo}>
             <Plus className="w-4 h-4 mr-2" />
-            Add Ho
+            Thêm Họ
           </Button>
         )}
       </div>
@@ -60,7 +60,7 @@ export default function HosView() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
             <Input
-              label="Search by Scientific Name"
+              label="Tìm theo tên khoa học"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search ten khoa hoc"
@@ -70,11 +70,11 @@ export default function HosView() {
           </div>
           
           <Select
-            label="Filter by Nganh"
+            label="Lọc theo Ngành"
             value={filters.ten_nganh_khoa_hoc || ''}
             onChange={handleNganhFilterChange}
           >
-            <option value="">All Nganhs</option>
+            <option value="">Tất cả Ngành</option>
             {nganhs.map(nganh => (
               <option key={nganh.ten_khoa_hoc} value={nganh.ten_khoa_hoc}>
                 {nganh.ten_khoa_hoc}
@@ -84,7 +84,7 @@ export default function HosView() {
 
           <div className="flex items-end col-start-1">
             <div className="text-sm text-gray-600">
-              Total: {total} hos
+              Tổng: {total} họ
             </div>
           </div>
         </div>
@@ -95,7 +95,7 @@ export default function HosView() {
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading hos...</p>
+            <p className="mt-2 text-gray-600">Đang tải danh sách họ...</p>
           </div>
         ) : (
           <>
@@ -104,25 +104,25 @@ export default function HosView() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Scientific Name
+                      Tên khoa học
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Vietnamese Name
+                      Tên tiếng Việt
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Nganh
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Description
+                      Mô tả
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Loais Count
+                      Số lượng loài
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created At
+                      Ngày tạo
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                      Thao tác
                     </th>
                   </tr>
                 </thead>
@@ -151,7 +151,7 @@ export default function HosView() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Badge variant="success">
-                          {ho.loais_count  || 0} loais
+                          {ho.loais_count  || 0} loài
                         </Badge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -165,7 +165,7 @@ export default function HosView() {
                         >
                           <span className="flex items-center"> 
                             <Eye className="w-4 h-4 mr-1" />
-                            View
+                            Xem
                           </span>
                         </Button>
                         {canEdit && (
@@ -175,7 +175,7 @@ export default function HosView() {
                             onClick={() => handleEditHo(ho)}
                           >
                             <Edit className="w-4 h-4 mr-1" />
-                            Edit
+                            Sửa
                           </Button>
                         )}
                         {canDelete && (
@@ -185,7 +185,7 @@ export default function HosView() {
                             onClick={() => handleDeleteHo(ho.id)}
                           >
                             <Trash2 className="w-4 h-4 mr-1" />
-                            Delete
+                            Xóa
                           </Button>
                         )}
                       </td>
@@ -197,7 +197,7 @@ export default function HosView() {
 
             {hos.length === 0 && (
               <div className="p-8 text-center">
-                <p className="text-gray-600">No hos found</p>
+                <p className="text-gray-600">Không tìm thấy họ nào</p>
               </div>
             )}
 
@@ -208,7 +208,7 @@ export default function HosView() {
               totalItems={total}
               itemsPerPage={filters.limit!}
               itemsCount={hos.length}
-              itemName="hos"
+              itemName="họ"
               onPageChange={(page) => setFilters(prev => ({ ...prev, page }))}
               onLimitChange={(limit) => setFilters(prev => ({ ...prev, limit, page: 1 }))}
             />

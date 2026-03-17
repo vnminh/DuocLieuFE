@@ -31,33 +31,33 @@ export function useSignupView() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.full_name.trim()) {
-      newErrors.full_name = 'Full name is required';
+      newErrors.full_name = 'Họ và tên là bắt buộc';
     } else if (formData.full_name.length < 2) {
-      newErrors.full_name = 'Full name must be at least 2 characters';
+      newErrors.full_name = 'Họ và tên phải có ít nhất 2 ký tự';
     }
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Email là bắt buộc';
     } else if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = 'Vui lòng nhập email hợp lệ';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = 'Mật khẩu là bắt buộc';
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = 'Mật khẩu phải có ít nhất 8 ký tự';
     } else if (!/[A-Z]/.test(formData.password)) {
-      newErrors.password = 'Password must contain at least one uppercase letter';
+      newErrors.password = 'Mật khẩu phải có ít nhất 1 chữ hoa';
     } else if (!/[a-z]/.test(formData.password)) {
-      newErrors.password = 'Password must contain at least one lowercase letter';
+      newErrors.password = 'Mật khẩu phải có ít nhất 1 chữ thường';
     } else if (!/[0-9]/.test(formData.password)) {
-      newErrors.password = 'Password must contain at least one number';
+      newErrors.password = 'Mật khẩu phải có ít nhất 1 chữ số';
     }
 
     if (!formData.confirm_password) {
-      newErrors.confirm_password = 'Please confirm your password';
+      newErrors.confirm_password = 'Vui lòng xác nhận mật khẩu';
     } else if (formData.password !== formData.confirm_password) {
-      newErrors.confirm_password = 'Passwords do not match';
+      newErrors.confirm_password = 'Mật khẩu xác nhận không khớp';
     }
 
 
@@ -98,7 +98,7 @@ export function useSignupView() {
         // Redirect to search page (default page for USER role)
         router.push('/admin/search');
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Signup failed';
+        const message = error instanceof Error ? error.message : 'Đăng ký thất bại';
         setSignupError(message);
         setFormData((prev) => ({
           ...prev,

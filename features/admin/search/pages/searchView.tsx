@@ -72,9 +72,9 @@ export default function SearchView() {
   } = useSearchView();
 
   const searchTypes: { value: SearchType; label: string; icon: React.ReactNode }[] = [
-    { value: 'loais', label: 'Loais', icon: <Layers className="w-4 h-4" /> },
-    { value: 'hos', label: 'Hos', icon: <Heart className="w-4 h-4" /> },
-    { value: 'nganhs', label: 'Nganhs', icon: <Filter className="w-4 h-4" /> },
+    { value: 'loais', label: 'Loài', icon: <Layers className="w-4 h-4" /> },
+    { value: 'hos', label: 'Họ', icon: <Heart className="w-4 h-4" /> },
+    { value: 'nganhs', label: 'Ngành', icon: <Filter className="w-4 h-4" /> },
   ];
 
   return (
@@ -82,7 +82,7 @@ export default function SearchView() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Search</h1>
-        <p className="text-gray-600 mt-1">Search across loais, hos, and nganhs</p>
+        <p className="text-gray-600 mt-1">Tìm kiếm trên loài, họ và ngành</p>
       </div>
 
       {/* Search Type Radio Buttons and Filters */}
@@ -90,7 +90,7 @@ export default function SearchView() {
         <div className="flex flex-col space-y-4">
           {/* Radio Button Group */}
           <div className="flex items-center space-x-6">
-            <span className="text-sm font-medium text-gray-700">Search in:</span>
+            <span className="text-sm font-medium text-gray-700">Tìm trong:</span>
             {searchTypes.map((type) => (
               <label
                 key={type.value}
@@ -119,7 +119,7 @@ export default function SearchView() {
             {/* Search Input */}
             <div className="relative md:col-span-2">
               <Input
-                label="Search by Scientific Name"
+                label="Tìm theo tên khoa học"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder={`Search ${searchType}...`}
@@ -136,7 +136,7 @@ export default function SearchView() {
                   value={filterNganh}
                   onChange={handleFilterChange('nganh')}
                 >
-                  <option value="">All Nganhs</option>
+                  <option value="">Tất cả Ngành</option>
                   {allNganhs.map(nganh => (
                     <option key={nganh.ten_khoa_hoc} value={nganh.ten_khoa_hoc}>
                       {nganh.ten_khoa_hoc}
@@ -145,11 +145,11 @@ export default function SearchView() {
                 </Select>
 
                 <Select
-                  label="Filter by Ho"
+                  label="Lọc theo Họ"
                   value={filterHo}
                   onChange={handleFilterChange('ho')}
                 >
-                  <option value="">All Hos</option>
+                  <option value="">Tất cả Họ</option>
                   {filteredHos.map(ho => (
                     <option key={ho.ten_khoa_hoc} value={ho.ten_khoa_hoc}>
                       {ho.ten_khoa_hoc}
@@ -158,11 +158,11 @@ export default function SearchView() {
                 </Select>
 
                 <Select
-                  label="Filter by Vung Phan Bo"
+                  label="Lọc theo Vùng phân bố"
                   value={filterVungPhanBo}
                   onChange={handleFilterChange('vungPhanBo')}
                 >
-                  <option value="">All Regions</option>
+                  <option value="">Tất cả vùng</option>
                   {allVungPhanBos.map(vung => (
                     <option key={vung.id} value={vung.id}>
                       {vung.ten_dia_phan_hanh_chinh}
@@ -175,11 +175,11 @@ export default function SearchView() {
             {/* Hos Filters */}
             {searchType === 'hos' && (
               <Select
-                label="Filter by Nganh"
+                label="Lọc theo Ngành"
                 value={filterNganh}
                 onChange={handleFilterChange('nganh')}
               >
-                <option value="">All Nganhs</option>
+                <option value="">Tất cả Ngành</option>
                 {allNganhs.map(nganh => (
                   <option key={nganh.ten_khoa_hoc} value={nganh.ten_khoa_hoc}>
                     {nganh.ten_khoa_hoc}
@@ -197,7 +197,7 @@ export default function SearchView() {
                   onClick={clearFilters}
                 >
                   <X className="w-4 h-4 mr-1" />
-                  Clear
+                  Xóa lọc
                 </Button>
               </div>
             )}
@@ -210,7 +210,7 @@ export default function SearchView() {
             </div>
             {hasActiveFilters && (
               <div className="flex items-center space-x-2">
-                <span className="text-xs text-gray-500">Active filters:</span>
+                <span className="text-xs text-gray-500">Bộ lọc đang áp dụng:</span>
                 {searchInput && (
                   <Badge variant="info" className="text-xs">
                     Search: {searchInput}
@@ -228,7 +228,7 @@ export default function SearchView() {
                 )}
                 {filterVungPhanBo && (
                   <Badge variant="info" className="text-xs">
-                    Region: {filterVungPhanBo}
+                    Vùng: {filterVungPhanBo}
                   </Badge>
                 )}
               </div>
@@ -241,12 +241,12 @@ export default function SearchView() {
       {loading ? (
         <div className="bg-white shadow-sm rounded-lg p-8 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Searching...</p>
+          <p className="mt-2 text-gray-600">Đang tìm kiếm...</p>
         </div>
       ) : getResultsCount() === 0 ? (
         <div className="bg-white shadow-sm rounded-lg p-8 text-center">
           <p className="text-gray-600">
-            {hasActiveFilters ? `No ${searchType} found matching your filters` : `No ${searchType} found`}
+            {hasActiveFilters ? `Không tìm thấy ${searchType} phù hợp bộ lọc` : `Không tìm thấy ${searchType}`}
           </p>
         </div>
       ) : (
@@ -259,10 +259,10 @@ export default function SearchView() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Scientific Name
+                        Tên khoa học
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Vietnamese Name
+                        Tên tiếng Việt
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Ho
@@ -271,10 +271,10 @@ export default function SearchView() {
                         Nganh
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Created At
+                        Ngày tạo
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
+                        Thao tác
                       </th>
                     </tr>
                   </thead>
@@ -310,7 +310,7 @@ export default function SearchView() {
                           >
                             <span className="flex items-center">
                               <Eye className="w-4 h-4 mr-1" />
-                              View
+                              Xem
                             </span>
                           </Button>
                           {canEdit && (
@@ -320,7 +320,7 @@ export default function SearchView() {
                               onClick={() => handleEditLoai(loai)}
                             >
                               <Edit className="w-4 h-4 mr-1" />
-                              Edit
+                              Sửa
                             </Button>
                           )}
                           {canDelete && (
@@ -330,7 +330,7 @@ export default function SearchView() {
                               onClick={() => handleDeleteLoai(loai.id)}
                             >
                               <Trash2 className="w-4 h-4 mr-1" />
-                              Delete
+                              Xóa
                             </Button>
                           )}
                         </td>
@@ -359,10 +359,10 @@ export default function SearchView() {
                         Nganh
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Description
+                        Mô tả
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Loais Count
+                        Số lượng loài
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Created At
@@ -395,7 +395,7 @@ export default function SearchView() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Badge variant="success">
-                            {ho.loais_count || 0} loais
+                            {ho.loais_count || 0} loài
                           </Badge>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -458,7 +458,7 @@ export default function SearchView() {
                         Description
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Hos Count
+                        Số lượng họ
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Created At
@@ -488,7 +488,7 @@ export default function SearchView() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Badge variant="info">
-                            {nganh.hos_count || 0} hos
+                            {nganh.hos_count || 0} họ
                           </Badge>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

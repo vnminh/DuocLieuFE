@@ -72,7 +72,7 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
     const newErrors: Record<string, string> = {};
 
     if (!formData.ten_khoa_hoc.trim()) {
-      newErrors.ten_khoa_hoc = 'Scientific name is required';
+      newErrors.ten_khoa_hoc = 'Tên khoa học là bắt buộc';
     }
 
     setErrors(newErrors);
@@ -106,8 +106,8 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error saving nganh:', error);
-      setErrors({ submit: 'Failed to save nganh. Please try again.' });
+      console.error('Lỗi khi lưu ngành:', error);
+      setErrors({ submit: 'Lưu ngành thất bại. Vui lòng thử lại.' });
     } finally {
       setLoading(false);
     }
@@ -132,7 +132,7 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={viewMode ? 'View Nganh' : (isEditMode ? 'Edit Nganh' : 'Add Nganh')}
+      title={viewMode ? 'Xem Ngành' : (isEditMode ? 'Sửa Ngành' : 'Thêm Ngành')}
       className="max-w-2xl"
     >
       {/* Tabs */}
@@ -146,7 +146,7 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Manual Entry
+            Nhập thủ công
           </button>
           <button
             onClick={() => setActiveTab('csv')}
@@ -156,7 +156,7 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            CSV Upload
+            Tải lên CSV
           </button>
         </div>
       )}
@@ -165,27 +165,27 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
       {activeTab === 'form' && (
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Scientific Name (Ten Khoa Hoc) *"
+            label="Tên khoa học *"
             name="ten_khoa_hoc"
             value={formData.ten_khoa_hoc}
             onChange={handleInputChange}
             error={errors.ten_khoa_hoc}
-            placeholder="Enter scientific name"
+            placeholder="Nhập tên khoa học"
             disabled={viewMode}
           />
 
           <Input
-            label="Vietnamese Name (Ten Tieng Viet)"
+            label="Tên tiếng Việt"
             name="ten_tieng_viet"
             value={formData.ten_tieng_viet}
             onChange={handleInputChange}
-            placeholder="Enter Vietnamese name"
+            placeholder="Nhập tên tiếng Việt"
             disabled={viewMode}
           />
 
           <div className="space-y-1">
             <label className="text-sm font-medium text-gray-700">
-              Description (Mo Ta)
+              Mô tả
             </label>
             <textarea
               name="mo_ta"
@@ -194,7 +194,7 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
               rows={3}
               disabled={viewMode}
               className="text-gray-700 flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-100"
-              placeholder="Enter description"
+              placeholder="Nhập mô tả"
             />
           </div>
 
@@ -203,11 +203,11 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
             <div className="space-y-3 pt-4 border-t border-gray-200">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-gray-800">
-                  Related Families (Họ)
+                  Các họ liên quan
                 </h3>
                 {detailData && (
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                    {detailData.hos_count} families
+                    {detailData.hos_count} họ
                   </span>
                 )}
               </div>
@@ -215,15 +215,15 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
               {loadingDetail ? (
                 <div className="flex items-center justify-center py-4">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span className="ml-2 text-sm text-gray-500">Loading related data...</span>
+                  <span className="ml-2 text-sm text-gray-500">Đang tải dữ liệu liên quan...</span>
                 </div>
               ) : detailData?.hos && detailData.hos.length > 0 ? (
                 <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-md">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50 sticky top-0">
                       <tr>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Scientific Name</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Vietnamese Name</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tên khoa học</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tên tiếng Việt</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Species Count</th>
                       </tr>
                     </thead>
@@ -234,7 +234,7 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
                           <td className="px-3 py-2 text-sm text-gray-600">{ho.ten_tieng_viet || '-'}</td>
                           <td className="px-3 py-2 text-sm">
                             <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">
-                              {ho.loais_count} species
+                              {ho.loais_count} loài
                             </span>
                           </td>
                         </tr>
@@ -243,7 +243,7 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
                   </table>
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 italic py-2">No related families found.</p>
+                <p className="text-sm text-gray-500 italic py-2">Không có họ liên quan.</p>
               )}
             </div>
           )}
@@ -259,14 +259,14 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
               onClick={onClose}
               disabled={loading}
             >
-              {viewMode ? 'Close' : 'Cancel'}
+              {viewMode ? 'Đóng' : 'Hủy'}
             </Button>
             {!viewMode && (
               <Button
                 type="submit"
                 disabled={loading}
               >
-                {loading ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
+                {loading ? 'Đang lưu...' : (isEditMode ? 'Cập nhật' : 'Tạo')}
               </Button>
             )}
           </div>
@@ -286,7 +286,7 @@ export function NganhFormModal({ isOpen, onClose, onSuccess, nganh, viewMode = f
               variant="secondary"
               onClick={onClose}
             >
-              Close
+              Đóng
             </Button>
           </div>
         </div>

@@ -36,7 +36,7 @@ export function useVungPhanBoView() {
             setTotal(response.total);
             if (response.pages) setTotalPages(response.pages)
         } catch (error) {
-            console.error('Error loading vung phan bos:', error);
+            console.error('Lỗi khi tải danh sách vùng phân bố:', error);
         } finally {
             setLoading(false);
         }
@@ -65,13 +65,13 @@ export function useVungPhanBoView() {
     };
 
     const handleDeleteVungPhanBo = async (vungPhanBoId: number) => {
-        if (window.confirm('Are you sure you want to delete this vung phan bo?')) {
+        if (window.confirm('Bạn có chắc chắn muốn xóa vùng phân bố này?')) {
             try {
                 await deleteVungPhanBo(vungPhanBoId);
                 fetchVungPhanBos();
             } catch (error) {
-                console.error('Error deleting vung phan bo:', error);
-                setErrorMessage('Failed to delete vung phan bo');
+                console.error('Lỗi khi xóa vùng phân bố:', error);
+                setErrorMessage('Xóa vùng phân bố thất bại');
             }
         }
     };

@@ -21,21 +21,21 @@ export function useLoginView() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Email là bắt buộc';
     } else if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = 'Vui lòng nhập email hợp lệ';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = 'Mật khẩu là bắt buộc';
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = 'Mật khẩu phải có ít nhất 8 ký tự';
     } else if (!/[A-Z]/.test(formData.password)) {
-      newErrors.password = 'Password must contain at least one uppercase letter';
+      newErrors.password = 'Mật khẩu phải có ít nhất 1 chữ hoa';
     } else if (!/[a-z]/.test(formData.password)) {
-      newErrors.password = 'Password must contain at least one lowercase letter';
+      newErrors.password = 'Mật khẩu phải có ít nhất 1 chữ thường';
     } else if (!/[0-9]/.test(formData.password)) {
-      newErrors.password = 'Password must contain at least one number';
+      newErrors.password = 'Mật khẩu phải có ít nhất 1 chữ số';
     }
 
     setErrors(newErrors);
@@ -75,7 +75,7 @@ export function useLoginView() {
         // Redirect to dashboard or home page
         router.push('/admin/users');
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Login failed';
+        const message = error instanceof Error ? error.message : 'Đăng nhập thất bại';
         setLoginError(message);
         setFormData((prev) => ({
           ...prev,

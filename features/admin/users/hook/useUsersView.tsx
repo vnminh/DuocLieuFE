@@ -36,7 +36,7 @@ export function useUsersView() {
             setTotal(response.total);
             if (response.pages) setTotalPages(response.pages);
         } catch (error) {
-            console.error('Error loading users:', error);
+            console.error('Lỗi khi tải danh sách người dùng:', error);
             // Show error message to user
         } finally {
             setLoading(false);
@@ -66,13 +66,13 @@ export function useUsersView() {
     };
 
     const handleDeleteUser = async (userId: number) => {
-        if (window.confirm('Are you sure you want to delete this user?')) {
+        if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
             try {
                 await deleteUser(userId);
                 fetchUsers();
             } catch (error) {
-                console.error('Error deleting user:', error);
-                setErrorMessage('Failed to delete user');
+                console.error('Lỗi khi xóa người dùng:', error);
+                setErrorMessage('Xóa người dùng thất bại');
             }
         }
     };
@@ -82,8 +82,8 @@ export function useUsersView() {
             await toggleUserBlock(userId, user_role);
             fetchUsers();
         } catch (error) {
-            console.error('Error toggling user block:', error);
-            setErrorMessage('Failed to update user status');
+            console.error('Lỗi khi cập nhật trạng thái người dùng:', error);
+            setErrorMessage('Cập nhật trạng thái người dùng thất bại');
         }
     };
 

@@ -36,7 +36,7 @@ export function useNganhsView() {
             setTotal(response.total);
             if (response.pages) setTotalPages(response.pages)
         } catch (error) {
-            console.error('Error loading nganhs:', error);
+            console.error('Lỗi khi tải danh sách ngành:', error);
         } finally {
             setLoading(false);
         }
@@ -65,13 +65,13 @@ export function useNganhsView() {
     };
 
     const handleDeleteNganh = async (nganhId: number) => {
-        if (window.confirm('Are you sure you want to delete this nganh?')) {
+        if (window.confirm('Bạn có chắc chắn muốn xóa ngành này?')) {
             try {
                 await deleteNganh(nganhId);
                 fetchNganhs();
             } catch (error) {
-                console.error('Error deleting nganh:', error);
-                setErrorMessage('Failed to delete nganh');
+                console.error('Lỗi khi xóa ngành:', error);
+                setErrorMessage('Xóa ngành thất bại');
             }
         }
     };

@@ -12,7 +12,7 @@ interface ErrorModalProps {
   title?: string;
 }
 
-export function ErrorModal({ isOpen, onClose, message, title = 'Error' }: ErrorModalProps) {
+export function ErrorModal({ isOpen, onClose, message, title = 'Lỗi' }: ErrorModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <div className="flex items-start space-x-3">

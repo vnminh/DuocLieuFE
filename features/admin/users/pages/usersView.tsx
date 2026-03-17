@@ -55,13 +55,13 @@ export default function UsersView() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-          <p className="text-gray-600 mt-1">Manage system users and their roles</p>
+          <h1 className="text-3xl font-bold text-gray-900">Quản lý người dùng</h1>
+          <p className="text-gray-600 mt-1">Quản lý người dùng hệ thống và vai trò</p>
         </div>
         {canAddUsers && (
           <Button onClick={handleCreateUser}>
             <Plus className="w-4 h-4 mr-2" />
-            Create User
+            Tạo người dùng
           </Button>
         )}
       </div>
@@ -70,25 +70,25 @@ export default function UsersView() {
       <div className="bg-white p-4 rounded-lg shadow-sm">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Input
-            label="Search by name or email"
+            label="Tìm theo tên hoặc email"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Type to search..."
+            placeholder="Nhập để tìm kiếm..."
           />
           
           <Select
-            label="Status"
+            label="Trạng thái"
             value={filters.status || ''}
             onChange={handleStatusFilterChange}
           >
-            <option value="" className='text-gray-400'>All Statuses</option>
-            <option value={UserStatus.ACTIVE} className='text-gray-700'>Active</option>
-            <option value={UserStatus.BLOCKED} className='text-gray-700'>Blocked</option>
+            <option value="" className='text-gray-400'>Tất cả trạng thái</option>
+            <option value={UserStatus.ACTIVE} className='text-gray-700'>Hoạt động</option>
+            <option value={UserStatus.BLOCKED} className='text-gray-700'>Bị khóa</option>
           </Select>
 
           <div className="flex items-end col-start-1">
             <div className="text-sm text-gray-600">
-              Total: {total} users
+              Tổng: {total} người dùng
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@ export default function UsersView() {
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading users...</p>
+            <p className="mt-2 text-gray-600">Đang tải danh sách người dùng...</p>
           </div>
         ) : (
           <>
@@ -108,7 +108,7 @@ export default function UsersView() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
+                      Người dùng
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Email
@@ -117,13 +117,13 @@ export default function UsersView() {
                       Role
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
+                      Trạng thái
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created At
+                      Ngày tạo
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                      Thao tác
                     </th>
                   </tr>
                 </thead>
@@ -184,7 +184,7 @@ export default function UsersView() {
                           >
                             <span className="flex items-center">
                               <Eye className="w-4 h-4 mr-1" />
-                              View
+                              Xem
                             </span>
                           </Button>
                           {canEditUsers && (
@@ -193,7 +193,7 @@ export default function UsersView() {
                               variant="primary"
                               onClick={() => handleEditUser(user)}
                             >
-                              Edit
+                              Sửa
                             </Button>
                           )}
                           {canEditUsers && (
@@ -202,7 +202,7 @@ export default function UsersView() {
                               variant={user.status === UserStatus.ACTIVE ? 'secondary' : 'primary'}
                               onClick={() => handleToggleBlock(user.id, cookieStorage.getUser()?.role || UserRole.USER)}
                             >
-                              {user.status === UserStatus.ACTIVE ? 'Block' : 'Unblock'}
+                              {user.status === UserStatus.ACTIVE ? 'Khóa' : 'Mở khóa'}
                             </Button>
                           )}
                           {canDeleteUsers && (
@@ -211,7 +211,7 @@ export default function UsersView() {
                               variant="danger"
                               onClick={() => handleDeleteUser(user.id)}
                             >
-                              Delete
+                              Xóa
                             </Button>
                           )}
                         </div>
@@ -224,7 +224,7 @@ export default function UsersView() {
 
             {users.length === 0 && (
               <div className="p-8 text-center">
-                <p className="text-gray-600">No users found</p>
+                <p className="text-gray-600">Không tìm thấy người dùng nào</p>
               </div>
             )}
 
@@ -235,7 +235,7 @@ export default function UsersView() {
               totalItems={total}
               itemsPerPage={filters.limit!}
               itemsCount={users.length}
-              itemName="users"
+              itemName="người dùng"
               onPageChange={(page) => setFilters(prev => ({ ...prev, page }))}
               onLimitChange={(limit) => setFilters(prev => ({ ...prev, limit, page: 1 }))}
             />

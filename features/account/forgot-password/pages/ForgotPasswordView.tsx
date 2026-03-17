@@ -23,9 +23,9 @@ export default function ForgotPasswordView() {
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Forgot Password</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Quên Mật Khẩu</h1>
           <p className="text-gray-600 mt-2">
-            Enter your email and we'll send you a new password
+            Nhập email của bạn, chúng tôi sẽ gửi mật khẩu mới
           </p>
         </div>
 
@@ -47,18 +47,18 @@ export default function ForgotPasswordView() {
                 />
               </svg>
               <p className="text-green-700 text-sm font-medium">
-                A new password has been sent to your email!
+                Mật khẩu mới đã được gửi đến email của bạn!
               </p>
             </div>
             <p className="text-green-600 text-sm mt-2">
-              Please check your inbox and use the new password to login.
+              Vui lòng kiểm tra hộp thư và dùng mật khẩu mới để đăng nhập.
             </p>
             <Button
               type="button"
               onClick={handleBackToLogin}
               className="w-full mt-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors"
             >
-              Back to Login
+              Quay lại Đăng nhập
             </Button>
           </div>
         )}
@@ -76,7 +76,7 @@ export default function ForgotPasswordView() {
             {/* Email Input */}
             <div>
               <Input
-                label="Email Address"
+                label="Địa chỉ Email"
                 type="email"
                 name="email"
                 value={formData.email}
@@ -99,10 +99,10 @@ export default function ForgotPasswordView() {
               {isLoading ? (
                 <span className="flex items-center justify-center">
                   <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span>
-                  Sending...
+                  Đang gửi...
                 </span>
               ) : (
-                'Send New Password'
+                'Gửi mật khẩu mới'
               )}
             </Button>
           </form>
@@ -112,12 +112,12 @@ export default function ForgotPasswordView() {
         {!isSuccess && (
           <div className="mt-6 pt-6 border-t border-gray-200 text-center">
             <p className="text-gray-600 text-sm">
-              Remember your password?{' '}
+              Nhớ mật khẩu rồi?{' '}
               <Link
                 href="/account/login"
                 className="text-blue-600 hover:text-blue-700 font-semibold"
               >
-                Back to Login
+                Quay lại Đăng nhập
               </Link>
             </p>
           </div>

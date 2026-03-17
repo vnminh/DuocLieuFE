@@ -65,11 +65,11 @@ export function Pagination({
     <div className="px-6 py-3 border-t border-gray-200 flex items-center justify-between">
       <div className="flex items-center space-x-4">
         <div className="text-sm text-gray-700">
-          Showing {totalItems} {itemName}
+          Hiển thị {totalItems} {itemName}
         </div>
         {onLimitChange && (
           <div className="flex items-center space-x-2">
-            <label className="text-sm text-gray-700">Rows per page:</label>
+            <label className="text-sm text-gray-700">Số dòng mỗi trang:</label>
             <select
               value={itemsPerPage}
               onChange={(e) => onLimitChange(Number(e.target.value))}
@@ -90,7 +90,7 @@ export function Pagination({
           variant="secondary"
           disabled={currentPage === 1}
           onClick={() => onPageChange(1)}
-          title="First page"
+          title="Trang đầu"
         >
           <ChevronsLeft className="w-4 h-4" />
         </Button>
@@ -99,7 +99,7 @@ export function Pagination({
           variant="secondary"
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
-          title="Previous page"
+          title="Trang trước"
         >
           <ChevronLeft className="w-4 h-4" />
         </Button>
@@ -138,7 +138,7 @@ export function Pagination({
           variant="secondary"
           disabled={currentPage === totalPages || totalPages === 0}
           onClick={() => onPageChange(currentPage + 1)}
-          title="Next page"
+          title="Trang sau"
         >
           <ChevronRight className="w-4 h-4" />
         </Button>
@@ -147,7 +147,7 @@ export function Pagination({
           variant="secondary"
           disabled={currentPage === totalPages || totalPages === 0}
           onClick={() => onPageChange(totalPages)}
-          title="Last page"
+          title="Trang cuối"
         >
           <ChevronsRight className="w-4 h-4" />
         </Button>

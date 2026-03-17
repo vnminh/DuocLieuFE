@@ -79,7 +79,7 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
     const newErrors: Record<string, string> = {};
 
     if (!formData.ten_dia_phan_hanh_chinh.trim()) {
-      newErrors.ten_dia_phan_hanh_chinh = 'Administrative region name is required';
+      newErrors.ten_dia_phan_hanh_chinh = 'Tên địa phận hành chính là bắt buộc';
     }
 
     setErrors(newErrors);
@@ -112,8 +112,8 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error saving vung phan bo:', error);
-      setErrors({ submit: 'Failed to save vung phan bo. Please try again.' });
+      console.error('Lỗi khi lưu vùng phân bố:', error);
+      setErrors({ submit: 'Lưu vùng phân bố thất bại. Vui lòng thử lại.' });
     } finally {
       setLoading(false);
     }
@@ -137,7 +137,7 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={viewMode ? 'View Vùng Phân Bố' : (isEditMode ? 'Edit Vùng Phân Bố' : 'Add Vùng Phân Bố')}
+      title={viewMode ? 'Xem Vùng phân bố' : (isEditMode ? 'Sửa Vùng phân bố' : 'Thêm Vùng phân bố')}
       className="max-w-2xl"
     >
       {/* Tabs */}
@@ -151,7 +151,7 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Manual Entry
+            Nhập thủ công
           </button>
           <button
             onClick={() => setActiveTab('csv')}
@@ -161,7 +161,7 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            CSV Upload
+            Tải lên CSV
           </button>
         </div>
       )}
@@ -169,11 +169,11 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
       {activeTab === 'form' ? (
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Administrative Region Name"
+            label="Tên địa phận hành chính"
             name="ten_dia_phan_hanh_chinh"
             value={formData.ten_dia_phan_hanh_chinh}
             onChange={handleInputChange}
-            placeholder="Enter administrative region name"
+            placeholder="Nhập tên địa phận hành chính"
             required
             disabled={viewMode}
             error={errors.ten_dia_phan_hanh_chinh}
@@ -181,13 +181,13 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Boundary Points List
+              Danh sách điểm biên
             </label>
             <textarea
               name="danh_sach_diem_bien"
               value={formData.danh_sach_diem_bien}
               onChange={handleInputChange}
-              placeholder="Enter boundary points (optional)"
+              placeholder="Nhập danh sách điểm biên (không bắt buộc)"
               rows={4}
               disabled={viewMode}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
@@ -199,15 +199,15 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
             <div className="space-y-3 pt-4 border-t border-gray-200">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-gray-800">
-                  Related Species (Loài) in this Region
+                  Loài liên quan trong vùng này
                 </h3>
                 {detailData && (
                   <div className="flex gap-2">
                     <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                      {detailData.loais_count} species
+                      {detailData.loais_count} loài
                     </span>
                     <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
-                      {detailData.vi_tri_dia_li_count} locations
+                      {detailData.vi_tri_dia_li_count} vị trí
                     </span>
                   </div>
                 )}
@@ -216,15 +216,15 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
               {loadingDetail ? (
                 <div className="flex items-center justify-center py-4">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span className="ml-2 text-sm text-gray-500">Loading related data...</span>
+                  <span className="ml-2 text-sm text-gray-500">Đang tải dữ liệu liên quan...</span>
                 </div>
               ) : detailData?.loais && detailData.loais.length > 0 ? (
                 <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-md">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50 sticky top-0">
                       <tr>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Scientific Name</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Vietnamese Name</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tên khoa học</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tên tiếng Việt</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Rarity</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Coords</th>
                       </tr>
@@ -245,7 +245,7 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
                           </td>
                           <td className="px-3 py-2 text-sm">
                             <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">
-                              {loai.coordinates.length} points
+                              {loai.coordinates.length} điểm
                             </span>
                           </td>
                         </tr>
@@ -254,7 +254,7 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
                   </table>
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 italic py-2">No related species found in this region.</p>
+                <p className="text-sm text-gray-500 italic py-2">Không có loài liên quan trong vùng này.</p>
               )}
             </div>
           )}
@@ -270,11 +270,11 @@ export function VungPhanBoFormModal({ isOpen, onClose, onSuccess, vungPhanBo, vi
               onClick={onClose}
               disabled={loading}
             >
-              {viewMode ? 'Close' : 'Cancel'}
+              {viewMode ? 'Đóng' : 'Hủy'}
             </Button>
             {!viewMode && (
               <Button type="submit" disabled={loading}>
-                {loading ? 'Saving...' : isEditMode ? 'Update' : 'Create'}
+                {loading ? 'Đang lưu...' : isEditMode ? 'Cập nhật' : 'Tạo'}
               </Button>
             )}
           </div>

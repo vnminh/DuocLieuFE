@@ -81,7 +81,7 @@ export function useLoaisView() {
             setTotal(response.total);
             if (response.pages) setTotalPages(response.pages);
         } catch (error) {
-            console.error('Error loading loais:', error);
+            console.error('Lỗi khi tải danh sách loài:', error);
         } finally {
             setLoading(false);
         }
@@ -110,13 +110,13 @@ export function useLoaisView() {
     };
 
     const handleDeleteLoai = async (loaiId: number) => {
-        if (window.confirm('Are you sure you want to delete this loai?')) {
+        if (window.confirm('Bạn có chắc chắn muốn xóa loài này?')) {
             try {
                 await deleteLoai(loaiId);
                 fetchLoais();
             } catch (error) {
-                console.error('Error deleting loai:', error);
-                setErrorMessage('Failed to delete loai');
+                console.error('Lỗi khi xóa loài:', error);
+                setErrorMessage('Xóa loài thất bại');
             }
         }
     };

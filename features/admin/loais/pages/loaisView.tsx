@@ -51,8 +51,8 @@ export default function LoaisView() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Loai Management</h1>
-          <p className="text-gray-600 mt-1">Manage taxonomic species (loais)</p>
+          <h1 className="text-3xl font-bold text-gray-900">Quản lý Loài</h1>
+          <p className="text-gray-600 mt-1">Quản lý các loài thực vật</p>
         </div>
         <div className="flex items-center space-x-3">
           {/* View Mode Toggle */}
@@ -64,7 +64,7 @@ export default function LoaisView() {
                   ? 'bg-white shadow-sm text-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
-              title="List View"
+              title="Chế độ danh sách"
             >
               <List className="w-5 h-5" />
             </button>
@@ -75,7 +75,7 @@ export default function LoaisView() {
                   ? 'bg-white shadow-sm text-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
-              title="Card View"
+              title="Chế độ thẻ"
             >
               <LayoutGrid className="w-5 h-5" />
             </button>
@@ -83,7 +83,7 @@ export default function LoaisView() {
           {canAdd && (
             <Button onClick={handleCreateLoai}>
               <Plus className="w-4 h-4 mr-2" />
-              Add Loai
+              Thêm Loài
             </Button>
           )}
         </div>
@@ -94,7 +94,7 @@ export default function LoaisView() {
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
           <div className="relative md:col-span-2">
             <Input
-              label="Search by Scientific Name"
+              label="Tìm theo tên khoa học"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search ten khoa hoc"
@@ -105,11 +105,11 @@ export default function LoaisView() {
           </div>
 
           <Select
-            label="Filter by Nganh"
+            label="Lọc theo Ngành"
             value={filters.ten_nganh_khoa_hoc || ''}
             onChange={handleFilterChange('ten_nganh_khoa_hoc')}
           >
-            <option value="">All Nganhs</option>
+            <option value="">Tất cả Ngành</option>
             {nganhs.map(nganh => (
               <option key={nganh.ten_khoa_hoc} value={nganh.ten_khoa_hoc}>
                 {nganh.ten_khoa_hoc}
@@ -118,11 +118,11 @@ export default function LoaisView() {
           </Select>
 
           <Select
-            label="Filter by Ho"
+            label="Lọc theo Họ"
             value={filters.ten_ho_khoa_hoc || ''}
             onChange={handleFilterChange('ten_ho_khoa_hoc')}
           >
-            <option value="">All Hos</option>
+            <option value="">Tất cả Họ</option>
             {filteredHos.map(ho => (
               <option key={ho.ten_khoa_hoc} value={ho.ten_khoa_hoc}>
                 {ho.ten_khoa_hoc}
@@ -131,11 +131,11 @@ export default function LoaisView() {
           </Select>
 
           <Select
-            label="Filter by Vung Phan Bo"
+            label="Lọc theo Vùng phân bố"
             value={filters.vung_phan_bo || ''}
             onChange={handleFilterChange('vung_phan_bo')}
           >
-            <option value="">All Regions</option>
+            <option value="">Tất cả vùng</option>
             {vungPhanBos.map(vung => (
               <option key={vung.id} value={vung.id}>
                 {vung.ten_dia_phan_hanh_chinh}
@@ -151,18 +151,18 @@ export default function LoaisView() {
               disabled={!hasActiveFilters}
             >
               <Filter className="w-4 h-4 mr-1" />
-              Clear
+              Xóa lọc
             </Button>
           </div>
         </div>
 
         <div className="mt-3 flex items-center justify-between">
           <div className="text-sm text-gray-600">
-            Total: {total} loais
+            Tổng: {total} loài
           </div>
           {hasActiveFilters && (
             <div className="flex items-center space-x-2">
-              <span className="text-xs text-gray-500">Active filters:</span>
+              <span className="text-xs text-gray-500">Bộ lọc đang áp dụng:</span>
               {filters.search && (
                 <Badge variant="info" className="text-xs">
                   Search: {filters.search}
@@ -180,7 +180,7 @@ export default function LoaisView() {
               )}
               {filters.vung_phan_bo && (
                 <Badge variant="info" className="text-xs">
-                  Region: {filters.vung_phan_bo}
+                  Vùng: {filters.vung_phan_bo}
                 </Badge>
               )}
             </div>
@@ -192,12 +192,12 @@ export default function LoaisView() {
       {loading ? (
         <div className="bg-white shadow-sm rounded-lg p-8 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading loais...</p>
+          <p className="mt-2 text-gray-600">Đang tải danh sách loài...</p>
         </div>
       ) : loais.length === 0 ? (
         <div className="bg-white shadow-sm rounded-lg p-8 text-center">
           <p className="text-gray-600">
-            {hasActiveFilters ? 'No loais found matching your filters' : 'No loais found'}
+            {hasActiveFilters ? 'Không tìm thấy loài phù hợp bộ lọc' : 'Không tìm thấy loài nào'}
           </p>
         </div>
       ) : (
@@ -224,13 +224,13 @@ export default function LoaisView() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Scientific Name
+                      Tên khoa học
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Vietnamese Name
+                      Tên tiếng Việt
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Alternative Name
+                      Tên gọi khác
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Ho
@@ -239,10 +239,10 @@ export default function LoaisView() {
                       Nganh
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created At
+                      Ngày tạo
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                      Thao tác
                     </th>
                   </tr>
                 </thead>
@@ -285,7 +285,7 @@ export default function LoaisView() {
                         >
                           <span className="flex items-center">           
                             <Eye className="w-4 h-4 mr-1" />
-                            View
+                            Xem
                           </span>
                         </Button>
                         {canEdit && (
@@ -295,7 +295,7 @@ export default function LoaisView() {
                             onClick={() => handleEditLoai(loai)}
                           >
                             <Edit className="w-4 h-4 mr-1" />
-                            Edit
+                            Sửa
                           </Button>
                         )}
                         {canDelete && (
@@ -305,7 +305,7 @@ export default function LoaisView() {
                             onClick={() => handleDeleteLoai(loai.id)}
                           >
                             <Trash2 className="w-4 h-4 mr-1" />
-                            Delete
+                            Xóa
                           </Button>
                         )}
                       </td>
@@ -325,7 +325,7 @@ export default function LoaisView() {
               totalItems={total}
               itemsPerPage={filters.limit!}
               itemsCount={loais.length}
-              itemName="loais"
+              itemName="loài"
               onPageChange={(page) => setFilters(prev => ({ ...prev, page }))}
               onLimitChange={(limit) => setFilters(prev => ({ ...prev, limit, page: 1 }))}
             />

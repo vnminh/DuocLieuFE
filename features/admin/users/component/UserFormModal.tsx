@@ -58,7 +58,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user, viewMode }: Us
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={viewMode ? 'View User' : (isEditMode ? 'Edit User' : 'Create User')}
+      title={viewMode ? 'Xem người dùng' : (isEditMode ? 'Sửa người dùng' : 'Tạo người dùng')}
       className="max-w-2xl"
     >
       {/* Tabs */}
@@ -72,7 +72,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user, viewMode }: Us
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Form
+            Nhập thủ công
           </button>
           <button
             onClick={() => setActiveTab('csv')}
@@ -82,7 +82,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user, viewMode }: Us
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            CSV Upload
+            Tải lên CSV
           </button>
         </div>
       )}
@@ -149,10 +149,10 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user, viewMode }: Us
               onChange={handleInputChange}
               disabled={viewMode}
             >
-              <option value="" className='text-gray-400'>Select gender</option>
-              <option value="Male" className='text-gray-700'>Male</option>
-              <option value="Female" className='text-gray-700'>Female</option>
-              <option value="Other" className='text-gray-700'>Other</option>
+              <option value="" className='text-gray-400'>Chọn giới tính</option>
+              <option value="Male" className='text-gray-700'>Nam</option>
+              <option value="Female" className='text-gray-700'>Nữ</option>
+              <option value="Other" className='text-gray-700'>Khác</option>
             </Select>
 
             <Input
@@ -165,15 +165,15 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user, viewMode }: Us
             />
 
             <Select
-              label="Status *"
+              label="Trạng thái *"
               name="status"
               value={formData.status}
               onChange={handleInputChange}
               error={errors.status}
               disabled={viewMode}
             >
-              <option value={UserStatus.ACTIVE}>Active</option>
-              <option value={UserStatus.BLOCKED}>Blocked</option>
+              <option value={UserStatus.ACTIVE}>Hoạt động</option>
+              <option value={UserStatus.BLOCKED}>Bị khóa</option>
             </Select>
 
             <Select
@@ -184,7 +184,7 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user, viewMode }: Us
               error={errors.role}
               disabled={viewMode}
             >
-              <option value={UserRole.USER}>User</option>
+              <option value={UserRole.USER}>Người dùng</option>
               <option value={UserRole.STAFF}>Staff</option>
               <option value={UserRole.ADMIN}>Admin</option>
             </Select>
@@ -201,14 +201,14 @@ export function UserFormModal({ isOpen, onClose, onSuccess, user, viewMode }: Us
               onClick={onClose}
               disabled={loading}
             >
-              {viewMode ? 'Close' : 'Cancel'}
+              {viewMode ? 'Đóng' : 'Hủy'}
             </Button>
             {!viewMode && (
               <Button
                 type="submit"
                 disabled={loading}
               >
-                {loading ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
+                {loading ? 'Đang lưu...' : (isEditMode ? 'Cập nhật' : 'Tạo')}
               </Button>
             )}
           </div>

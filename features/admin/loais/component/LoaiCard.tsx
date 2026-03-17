@@ -20,13 +20,13 @@ export function LoaiCard({ loai, onView, onEdit, onDelete, formatDate }: LoaiCar
   const getMucDoQuyHiemBadge = (mucDo: string | undefined) => {
     switch (mucDo) {
       case 'RAT_CAO':
-        return <Badge variant="danger">Rarity: Very High</Badge>;
+        return <Badge variant="danger">Mức độ hiếm: Rất cao</Badge>;
       case 'CAO':
-        return <Badge variant="warning">Rarity: High</Badge>;
+        return <Badge variant="warning">Mức độ hiếm: Cao</Badge>;
       case 'TRUNG_BINH':
-        return <Badge variant="info">Rarity: Medium</Badge>;
+        return <Badge variant="info">Mức độ hiếm: Trung bình</Badge>;
       default:
-        return <Badge variant="success">Rarity: Low</Badge>;
+        return <Badge variant="success">Mức độ hiếm: Thấp</Badge>;
     }
   };
 
@@ -49,7 +49,7 @@ export function LoaiCard({ loai, onView, onEdit, onDelete, formatDate }: LoaiCar
         {/* Alternative Name */}
         {loai.ten_goi_khac && (
           <div>
-            <span className="text-xs text-gray-500">Alternative Name:</span>
+            <span className="text-xs text-gray-500">Tên gọi khác:</span>
             <p className="text-sm text-gray-700 truncate">{loai.ten_goi_khac}</p>
           </div>
         )}
@@ -73,14 +73,14 @@ export function LoaiCard({ loai, onView, onEdit, onDelete, formatDate }: LoaiCar
         {loai.vi_tri_dia_li && loai.vi_tri_dia_li.length > 0 && (
           <div className="flex items-center text-sm text-gray-600">
             <MapPin className="w-4 h-4 mr-1" />
-            {loai.vi_tri_dia_li.length} location(s)
+            {loai.vi_tri_dia_li.length} vị trí
           </div>
         )}
 
         {/* Created Date */}
         <div className="flex items-center text-xs text-gray-500">
           <Calendar className="w-3 h-3 mr-1" />
-          Created: {formatDate(loai.created_at)}
+          Ngày tạo: {formatDate(loai.created_at)}
         </div>
       </div>
 
@@ -88,12 +88,12 @@ export function LoaiCard({ loai, onView, onEdit, onDelete, formatDate }: LoaiCar
       <div className="p-4 bg-gray-50 flex justify-end space-x-2 mt-auto">
         <Button size="sm" variant="secondary" onClick={() => onView(loai)}>
           <Eye className="w-4 h-4 mr-1" />
-          View
+          Xem
         </Button>
         {canEdit && (
           <Button size="sm" variant="primary" onClick={() => onEdit(loai)}>
             <Edit className="w-4 h-4 mr-1" />
-            Edit
+            Sửa
           </Button>
         )}
         {canDelete && (

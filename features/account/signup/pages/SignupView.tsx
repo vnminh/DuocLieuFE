@@ -22,8 +22,8 @@ export default function SignupView() {
       <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
-          <p className="text-gray-600 mt-2">Join Dược Liệu and start exploring</p>
+          <h1 className="text-3xl font-bold text-gray-900">Tạo tài khoản</h1>
+          <p className="text-gray-600 mt-2">Tham gia và bắt đầu khám phá</p>
         </div>
 
         {/* Error Message */}
@@ -38,7 +38,7 @@ export default function SignupView() {
           {/* Full Name */}
           <div>
             <Input
-              label="Full Name"
+              label="Họ và tên"
               type="text"
               name="full_name"
               value={formData.full_name}
@@ -52,7 +52,7 @@ export default function SignupView() {
           {/* Email Address */}
           <div>
             <Input
-              label="Email Address"
+              label="Địa chỉ Email"
               type="email"
               name="email"
               value={formData.email}
@@ -66,7 +66,7 @@ export default function SignupView() {
           {/* Password */}
           <div>
             <Input
-              label="Password"
+              label="Mật khẩu"
               type="password"
               name="password"
               value={formData.password}
@@ -76,14 +76,14 @@ export default function SignupView() {
               error={errors.password}
             />
             <p className="text-xs text-gray-500 mt-2">
-              Password must contain uppercase, lowercase, number (min 8 chars)
+              Mật khẩu phải có chữ hoa, chữ thường, số (tối thiểu 8 ký tự)
             </p>
           </div>
 
           {/* Confirm Password */}
           <div>
             <Input
-              label="Confirm Password"
+              label="Xác nhận mật khẩu"
               type="password"
               name="confirm_password"
               value={formData.confirm_password}
@@ -99,7 +99,7 @@ export default function SignupView() {
             {/* Gender */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Gender (Optional)
+                Giới tính (Không bắt buộc)
               </label>
               <Select
                 name="gender"
@@ -107,17 +107,17 @@ export default function SignupView() {
                 onChange={handleInputChange}
                 disabled={isLoading}
               >
-                <option value="">Select gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
+                <option value="">Chọn giới tính</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
+                <option value="Other">Khác</option>
               </Select>
             </div>
 
             {/* Date of Birth */}
             <div>
               <Input
-                label="Date of Birth (Optional)"
+                label="Ngày sinh (Không bắt buộc)"
                 type="date"
                 name="date_of_birth"
                 value={formData.date_of_birth}
@@ -130,12 +130,12 @@ export default function SignupView() {
           {/* Address */}
           <div>
             <Input
-              label="Address (Optional)"
+              label="Địa chỉ (Không bắt buộc)"
               type="text"
               name="address"
               value={formData.address}
               onChange={handleInputChange}
-              placeholder="123 Street Name"
+              placeholder="123 Tên Đường"
               disabled={isLoading}
             />
           </div>
@@ -150,10 +150,10 @@ export default function SignupView() {
             {isLoading ? (
               <span className="flex items-center justify-center">
                 <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span>
-                Creating account...
+                Đang tạo tài khoản...
               </span>
             ) : (
-              'Create Account'
+              'Tạo tài khoản'
             )}
           </Button>
         </form>
@@ -161,12 +161,12 @@ export default function SignupView() {
         {/* Login Link */}
         <div className="mt-6 pt-6 border-t border-gray-200 text-center">
           <p className="text-gray-600 text-sm">
-            Already have an account?{' '}
+            Bạn đã có tài khoản?{' '}
             <Link
               href="/account/login"
               className="text-blue-600 hover:text-blue-700 font-semibold"
             >
-              Login here
+              Đăng nhập tại đây
             </Link>
           </p>
         </div>

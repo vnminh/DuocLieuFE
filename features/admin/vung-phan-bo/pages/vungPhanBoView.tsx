@@ -41,13 +41,13 @@ export default function VungPhanBoView() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Vùng Phân Bố Management</h1>
-          <p className="text-gray-600 mt-1">Manage distribution regions</p>
+          <h1 className="text-3xl font-bold text-gray-900">Quản lý Vùng phân bố</h1>
+          <p className="text-gray-600 mt-1">Quản lý các vùng phân bố</p>
         </div>
         {canAdd && (
           <Button onClick={handleCreateVungPhanBo}>
             <Plus className="w-4 h-4 mr-2" />
-            Add Vùng Phân Bố
+            Thêm Vùng phân bố
           </Button>
         )}
       </div>
@@ -57,7 +57,7 @@ export default function VungPhanBoView() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <Input
-              label="Search by Administrative Region"
+              label="Tìm theo địa phận hành chính"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search ten_dia_phan_hanh_chinh..."
@@ -68,7 +68,7 @@ export default function VungPhanBoView() {
 
           <div className="flex items-end col-start-1">
             <div className="text-sm text-gray-600">
-              Total: {total} distribution regions
+              Tổng: {total} vùng phân bố
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@ export default function VungPhanBoView() {
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading distribution regions...</p>
+            <p className="mt-2 text-gray-600">Đang tải danh sách vùng phân bố...</p>
           </div>
         ) : (
           <>
@@ -88,19 +88,19 @@ export default function VungPhanBoView() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Administrative Region
+                      Địa phận hành chính
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Boundary Points
+                      Điểm biên
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Locations Count
+                      Số lượng vị trí
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created At
+                      Ngày tạo
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                      Thao tác
                     </th>
                   </tr>
                 </thead>
@@ -119,7 +119,7 @@ export default function VungPhanBoView() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Badge variant="info">
-                          {vungPhanBo.vi_tri_dia_li_count || 0} locations
+                          {vungPhanBo.vi_tri_dia_li_count || 0} vị trí
                         </Badge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -132,7 +132,7 @@ export default function VungPhanBoView() {
                           onClick={() => handleViewVungPhanBo(vungPhanBo)}
                         >
                           <Eye className="w-4 h-4 mr-1" />
-                          View
+                          Xem
                         </Button>
                         {canEdit && (
                           <Button
@@ -141,7 +141,7 @@ export default function VungPhanBoView() {
                             onClick={() => handleEditVungPhanBo(vungPhanBo)}
                           >
                             <Edit className="w-4 h-4 mr-1" />
-                            Edit
+                            Sửa
                           </Button>
                         )}
                         {canDelete && (
@@ -151,7 +151,7 @@ export default function VungPhanBoView() {
                             onClick={() => handleDeleteVungPhanBo(vungPhanBo.id)}
                           >
                             <Trash2 className="w-4 h-4 mr-1" />
-                            Delete
+                            Xóa
                           </Button>
                         )}
                       </td>
@@ -163,7 +163,7 @@ export default function VungPhanBoView() {
 
             {vungPhanBos.length === 0 && (
               <div className="p-8 text-center">
-                <p className="text-gray-600">No distribution regions found</p>
+                <p className="text-gray-600">Không tìm thấy vùng phân bố nào</p>
               </div>
             )}
 
@@ -174,7 +174,7 @@ export default function VungPhanBoView() {
               totalItems={total}
               itemsPerPage={filters.limit!}
               itemsCount={vungPhanBos.length}
-              itemName="regions"
+              itemName="vùng"
               onPageChange={(page) => setFilters(prev => ({ ...prev, page }))}
               onLimitChange={(limit) => setFilters(prev => ({ ...prev, limit, page: 1 }))}
             />

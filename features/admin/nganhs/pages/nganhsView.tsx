@@ -41,13 +41,13 @@ export default function NganhsView() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Nganh Management</h1>
-          <p className="text-gray-600 mt-1">Manage taxonomic kingdoms (nganhs)</p>
+          <h1 className="text-3xl font-bold text-gray-900">Quản lý Ngành</h1>
+          <p className="text-gray-600 mt-1">Quản lý các ngành thực vật</p>
         </div>
         {canAdd && (
           <Button onClick={handleCreateNganh}>
             <Plus className="w-4 h-4 mr-2" />
-            Add Nganh
+            Thêm Ngành
           </Button>
         )}
       </div>
@@ -57,7 +57,7 @@ export default function NganhsView() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <Input
-              label="Search by Scientific Name"
+              label="Tìm theo tên khoa học"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search ten_khoa_hoc..."
@@ -68,7 +68,7 @@ export default function NganhsView() {
 
           <div className="flex items-end col-start-1">
             <div className="text-sm text-gray-600">
-              Total: {total} nganhs
+              Tổng: {total} ngành
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@ export default function NganhsView() {
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading nganhs...</p>
+            <p className="mt-2 text-gray-600">Đang tải danh sách ngành...</p>
           </div>
         ) : (
           <>
@@ -88,22 +88,22 @@ export default function NganhsView() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Scientific Name
+                      Tên khoa học
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Vietnamese Name
+                      Tên tiếng Việt
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Description
+                      Mô tả
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Hos Count
+                      Số lượng họ
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created At
+                      Ngày tạo
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                      Thao tác
                     </th>
                   </tr>
                 </thead>
@@ -141,7 +141,7 @@ export default function NganhsView() {
                         >
                           <span className="flex items-center">
                             <Eye className="w-4 h-4 mr-1" />
-                            View
+                            Xem
                           </span>
                         </Button>
                         {canEdit && (
@@ -151,7 +151,7 @@ export default function NganhsView() {
                             onClick={() => handleEditNganh(nganh)}
                           >
                             <Edit className="w-4 h-4 mr-1" />
-                            Edit
+                            Sửa
                           </Button>
                         )}
                         {canDelete && (
@@ -161,7 +161,7 @@ export default function NganhsView() {
                             onClick={() => handleDeleteNganh(nganh.id)}
                           >
                             <Trash2 className="w-4 h-4 mr-1" />
-                            Delete
+                            Xóa
                           </Button>
                         )}
                       </td>
@@ -173,7 +173,7 @@ export default function NganhsView() {
 
             {nganhs.length === 0 && (
               <div className="p-8 text-center">
-                <p className="text-gray-600">No nganhs found</p>
+                <p className="text-gray-600">Không tìm thấy ngành nào</p>
               </div>
             )}
 
@@ -184,7 +184,7 @@ export default function NganhsView() {
               totalItems={total}
               itemsPerPage={filters.limit!}
               itemsCount={nganhs.length}
-              itemName="nganhs"
+              itemName="ngành"
               onPageChange={(page) => setFilters(prev => ({ ...prev, page }))}
               onLimitChange={(limit) => setFilters(prev => ({ ...prev, limit, page: 1 }))}
             />

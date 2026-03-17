@@ -21,9 +21,9 @@ export function useForgotPasswordView() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Email là bắt buộc';
     } else if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = 'Vui lòng nhập email hợp lệ';
     }
 
     setErrors(newErrors);
@@ -69,7 +69,7 @@ export function useForgotPasswordView() {
         const message =
           error instanceof Error
             ? error.message
-            : 'Failed to send reset email. Please try again.';
+            : 'Gửi email đặt lại mật khẩu thất bại. Vui lòng thử lại.';
         setSubmitError(message);
       } finally {
         setIsLoading(false);

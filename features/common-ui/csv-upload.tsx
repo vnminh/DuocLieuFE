@@ -67,7 +67,7 @@ export function CsvUpload({
 
   const handleFileSelect = async (file: File) => {
     if (!file.type.includes('csv') && !file.name.endsWith('.csv')) {
-      setResults({ success: 0, errors: ['Please select a CSV file'] });
+      setResults({ success: 0, errors: ['Vui lòng chọn file CSV'] });
       return;
     }
 
@@ -84,7 +84,7 @@ export function CsvUpload({
           if (!validation.isValid) {
             setCSVPreview({
               data: null,
-              error: `Missing required columns: ${validation.missingFields.join(', ')}`,
+              error: `Thiếu các cột bắt buộc: ${validation.missingFields.join(', ')}`,
               loading: false
             });
             return;
@@ -95,7 +95,7 @@ export function CsvUpload({
       } catch (err) {
         setCSVPreview({
           data: null,
-          error: err instanceof Error ? err.message : 'Failed to parse CSV',
+          error: err instanceof Error ? err.message : 'Xử lý file CSV thất bại',
           loading: false
         });
         return;
@@ -112,7 +112,7 @@ export function CsvUpload({
     } catch (error) {
       setResults({ 
         success: 0, 
-        errors: [error instanceof Error ? error.message : 'Upload failed'] 
+        errors: [error instanceof Error ? error.message : 'Tải lên thất bại'] 
       });
     } finally {
       setUploading(false);
@@ -170,10 +170,10 @@ export function CsvUpload({
       >
         <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
         <p className="text-lg font-medium text-gray-900 mb-2">
-          Drop your CSV file here, or click to browse
+          Thả file CSV vào đây hoặc bấm để chọn
         </p>
         <p className="text-sm text-gray-600 mb-4">
-          Supports CSV files with the following columns
+          Hỗ trợ file CSV với các cột sau
         </p>
         
         <Button
@@ -181,7 +181,7 @@ export function CsvUpload({
           disabled={uploading}
           className="mb-4"
         >
-          {uploading ? 'Uploading...' : 'Select CSV File'}
+          {uploading ? 'Đang tải lên...' : 'Chọn file CSV'}
         </Button>
 
         <input
@@ -195,7 +195,7 @@ export function CsvUpload({
 
       {/* Accepted Columns */}
       <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="font-medium text-gray-900 mb-2">Expected CSV Columns:</h4>
+        <h4 className="font-medium text-gray-900 mb-2">Các cột CSV cần có:</h4>
         <div className="flex flex-wrap gap-2">
           {acceptedColumns.map((column) => (
             <span
@@ -214,7 +214,7 @@ export function CsvUpload({
           <div className="flex items-center">
             <FileText className="w-5 h-5 text-yellow-600 mr-2" />
             <span className="text-sm font-medium text-yellow-800">
-              Need help with the format?
+              Cần hỗ trợ định dạng?
             </span>
           </div>
           <Button
@@ -222,7 +222,7 @@ export function CsvUpload({
             variant="secondary"
             onClick={downloadSampleCsv}
           >
-            Download Sample CSV
+            Tải file CSV mẫu
           </Button>
         </div>
       )}
@@ -230,7 +230,7 @@ export function CsvUpload({
       {/* CSV Preview Loading State */}
       {showPreview && csvPreview.loading && (
         <div className="flex items-center justify-center p-4 bg-blue-50 rounded-lg">
-          <div className="text-sm text-blue-700">Processing CSV file...</div>
+          <div className="text-sm text-blue-700">Đang xử lý file CSV...</div>
         </div>
       )}
 
@@ -239,7 +239,7 @@ export function CsvUpload({
         <div className="rounded-lg p-4 bg-red-50">
           <div className="flex items-center mb-2">
             <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
-            <h4 className="font-medium text-red-800">CSV Validation Error</h4>
+            <h4 className="font-medium text-red-800">Lỗi khi kiểm tra format file CSV</h4>
           </div>
           <p className="text-sm text-red-700">{csvPreview.error}</p>
         </div>
@@ -249,9 +249,9 @@ export function CsvUpload({
       {showPreview && csvPreview.data && (
         <div className="rounded-lg border border-gray-200 p-4 overflow-auto">
           <div className="mb-3">
-            <h4 className="font-medium text-gray-900 mb-2">CSV Preview</h4>
+            <h4 className="font-medium text-gray-900 mb-2">Xem trước</h4>
             <p className="text-sm text-gray-600">
-              Total rows: <span className="font-semibold">{csvPreview.data.totalRows}</span>
+              Tổng số dòng: <span className="font-semibold">{csvPreview.data.totalRows}</span>
             </p>
           </div>
           
@@ -292,8 +292,8 @@ export function CsvUpload({
               onClick={() => setShowAllRows(!showAllRows)}
             >
               {showAllRows 
-                ? 'Hide' 
-                : `... and ${csvPreview.data.totalRows - csvPreview.data.preview.length} more rows`
+                ? 'Ẩn' 
+                : `... và ${csvPreview.data.totalRows - csvPreview.data.preview.length} dòng nữa`
               }
             </a>
           )}
@@ -314,20 +314,20 @@ export function CsvUpload({
             <h4 className={`font-medium ${
               results.errors.length > 0 ? 'text-red-800' : 'text-green-800'
             }`}>
-              Upload Results
+              Kết quả tải lên
             </h4>
           </div>
           
           {results.success > 0 && (
             <p className="text-sm text-green-700 mb-2">
-              ✅ Successfully imported {results.success} records
+              ✅ Đã thêm thành công {results.success} bản ghi
             </p>
           )}
           
           {results.errors.length > 0 && (
             <div>
               <p className="text-sm text-red-700 mb-2">
-                ❌ {results.errors.length} errors occurred:
+                ❌ {results.errors.length} lỗi đã xảy ra:
               </p>
               <ul className="list-disc list-inside text-sm text-red-700 space-y-1 max-h-32 overflow-y-auto">
                 {results.errors.map((error, index) => (

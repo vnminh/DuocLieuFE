@@ -45,8 +45,8 @@ export async function getLoaiByName(tenKhoaHoc: string): Promise<Loai> {
  * Create a single Loài
  * Endpoint: POST /loais
  */
-export async function createLoai(data: CreateLoaiData): Promise<Loai> {
-  const response = await apiPost<any>('/loais', data);
+export async function createLoai(data: CreateLoaiWithDetailsData): Promise<Loai> {
+  const response = await apiPost<any>('/loais/with-details', data);
   return response.data || response;
 }
 
@@ -54,8 +54,8 @@ export async function createLoai(data: CreateLoaiData): Promise<Loai> {
  * Create multiple Loài
  * Endpoint: POST /loais/many
  */
-export async function createMultipleLoais(dataList: CreateLoaiData[]): Promise<Loai[]> {
-  const response = await apiPost<any>('/loais/many', { data: dataList });
+export async function createMultipleLoais(loaisData: CreateLoaiWithDetailsData[]): Promise<Loai[]> {
+  const response = await apiPost<any>('/loais/many-with-details', { data: loaisData });
   return response.data || response;
 }
 

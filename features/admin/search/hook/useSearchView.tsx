@@ -138,7 +138,7 @@ export function useSearchView() {
         setHos([]);
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Lỗi khi tải dữ liệu tìm kiếm:', error);
     } finally {
       setLoading(false);
     }
@@ -208,12 +208,12 @@ export function useSearchView() {
   };
 
   const handleDeleteLoai = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this loai?')) {
+    if (window.confirm('Bạn có chắc chắn muốn xóa loài này?')) {
       try {
         await deleteLoai(id);
         fetchData();
       } catch (error) {
-        console.error('Error deleting loai:', error);
+        console.error('Lỗi khi xóa loài:', error);
       }
     }
   };
@@ -238,12 +238,12 @@ export function useSearchView() {
   };
 
   const handleDeleteHo = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this ho?')) {
+    if (window.confirm('Bạn có chắc chắn muốn xóa họ này?')) {
       try {
         await deleteHo(id);
         fetchData();
       } catch (error) {
-        console.error('Error deleting ho:', error);
+        console.error('Lỗi khi xóa họ:', error);
       }
     }
   };
@@ -268,12 +268,12 @@ export function useSearchView() {
   };
 
   const handleDeleteNganh = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this nganh?')) {
+    if (window.confirm('Bạn có chắc chắn muốn xóa ngành này?')) {
       try {
         await deleteNganh(id);
         fetchData();
       } catch (error) {
-        console.error('Error deleting nganh:', error);
+        console.error('Lỗi khi xóa ngành:', error);
       }
     }
   };
