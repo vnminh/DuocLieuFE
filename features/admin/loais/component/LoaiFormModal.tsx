@@ -13,15 +13,27 @@ import { Nganh } from '@/types/nganhs';
 import { createLoai, updateLoai, uploadLoaisCsv } from '@/lib/api/loais';
 import { loadAllHos } from '@/lib/api/hos';
 import { loadAllNganhs } from '@/lib/api/nganhs';
+import { loadAllVungPhanBos } from '@/lib/api/vung-phan-bo';
+import { VungPhanBo } from '@/types/vung-phan-bo';
 import { LoaiFormModalProps } from '../types/loais';
 import { Image as ImageIcon } from 'lucide-react';
+
+type DistributionPoint = {
+  kinh_do: string;
+  vi_do: string;
+  id_vung_phan_bo: string;
+};
 
 export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: LoaiFormModalProps) {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'form' | 'csv'>('form');
   const [hos, setHos] = useState<Ho[]>([]);
   const [nganhs, setNganhs] = useState<Nganh[]>([]);
+  const [vungPhanBos, setVungPhanBos] = useState<VungPhanBo[]>([]);
   const [filteredHos, setFilteredHos] = useState<Ho[]>([]);
+  const [distributionPoints, setDistributionPoints] = useState<DistributionPoint[]>([
+    { kinh_do: '', vi_do: '', id_vung_phan_bo: '' },
+  ]);
   const [formData, setFormData] = useState({
     ten_khoa_hoc: '',
     ten_tieng_viet: '',
@@ -52,10 +64,12 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
     if (isOpen) {
       Promise.all([
         loadAllHos(),
-        loadAllNganhs()
-      ]).then(([hosData, nganhsData]) => {
+        loadAllNganhs(),
+        loadAllVungPhanBos(),
+      ]).then(([hosData, nganhsData, vungPhanBoData]) => {
         setHos(hosData.hos);
         setNganhs(nganhsData);
+        setVungPhanBos(vungPhanBoData);
         setFilteredHos(hosData.hos);
       }).catch(console.error);
       
@@ -82,6 +96,15 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
           vi_do: loai.vi_tri_dia_li?.map((vi_tri_dia_li)=>vi_tri_dia_li.vi_do).join(';')||'',
           id_vung_phan_bo: loai.vi_tri_dia_li?.map((vi_tri_dia_li)=>vi_tri_dia_li.id_vung_phan_bo).join(';')||'',
         });
+
+        const pointsFromLoai = (loai.vi_tri_dia_li || []).map((viTri) => ({
+          kinh_do: viTri.kinh_do?.toString() || '',
+          vi_do: viTri.vi_do?.toString() || '',
+          id_vung_phan_bo: viTri.id_vung_phan_bo?.toString() || '',
+        }));
+        setDistributionPoints(pointsFromLoai.length > 0
+          ? pointsFromLoai
+          : [{ kinh_do: '', vi_do: '', id_vung_phan_bo: '' }]);
       } else {
         setFormData({
           ten_khoa_hoc: '',
@@ -105,6 +128,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
           vi_do: '',
           id_vung_phan_bo: ''
         });
+        setDistributionPoints([{ kinh_do: '', vi_do: '', id_vung_phan_bo: '' }]);
       }
       setErrors({});
       setActiveTab('form');
@@ -149,11 +173,11 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
     const newErrors: Record<string, string> = {};
 
     if (!formData.ten_khoa_hoc.trim()) {
-      newErrors.ten_khoa_hoc = 'Scientific name is required';
+      newErrors.ten_khoa_hoc = 'Tên khoa học là bắt buộc';
     }
 
     if (!formData.ten_ho_khoa_hoc.trim()) {
-      newErrors.ten_ho_khoa_hoc = 'Ho selection is required';
+      newErrors.ten_ho_khoa_hoc = 'Vui lòng chọn họ';
     }
 
     setErrors(newErrors);
@@ -170,6 +194,35 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
     setLoading(true);
 
     try {
+      const normalizedPoints = distributionPoints.map((point) => ({
+        kinh_do: point.kinh_do.trim(),
+        vi_do: point.vi_do.trim(),
+        id_vung_phan_bo: point.id_vung_phan_bo.trim(),
+      }));
+      const hasPartialPoint = normalizedPoints.some((point) => {
+        const filled = [point.kinh_do, point.vi_do, point.id_vung_phan_bo].filter(Boolean).length;
+        return filled > 0 && filled < 3;
+      });
+      if (hasPartialPoint) {
+        setErrors({ submit: 'Mỗi điểm phân bố cần nhập đủ kinh độ, vĩ độ và vùng phân bố.' });
+        setLoading(false);
+        return;
+      }
+
+      const completePoints = normalizedPoints.filter(
+        (point) => point.kinh_do && point.vi_do && point.id_vung_phan_bo
+      );
+      const joinedKinhDo = completePoints.map((point) => point.kinh_do).join(';');
+      const joinedViDo = completePoints.map((point) => point.vi_do).join(';');
+      const joinedVungPhanBo = completePoints.map((point) => point.id_vung_phan_bo).join(';');
+
+      setFormData((prev) => ({
+        ...prev,
+        kinh_do: joinedKinhDo,
+        vi_do: joinedViDo,
+        id_vung_phan_bo: joinedVungPhanBo,
+      }));
+
       const submitData = {
         ten_khoa_hoc: formData.ten_khoa_hoc.trim(),
         ten_tieng_viet: formData.ten_tieng_viet.trim() || undefined,
@@ -187,9 +240,9 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
         ...(formData.bo_phan_su_dung.trim() && { bo_phan_su_dung: formData.bo_phan_su_dung.trim() }),
         ...(formData.cong_dung.trim() && { cong_dung: formData.cong_dung.trim() }),
         ...(formData.bai_thuoc.trim() && { bai_thuoc: formData.bai_thuoc.trim() }),
-        ...(formData.kinh_do.trim() && { kinh_do: formData.kinh_do.trim() }),
-        ...(formData.vi_do.trim() && { vi_do: formData.vi_do.trim() }),
-        ...(formData.id_vung_phan_bo.trim() && { id_vung_phan_bo: formData.id_vung_phan_bo.trim() })
+        ...(joinedKinhDo && { kinh_do: joinedKinhDo }),
+        ...(joinedViDo && { vi_do: joinedViDo }),
+        ...(joinedVungPhanBo && { id_vung_phan_bo: joinedVungPhanBo })
       };
 
       if (isEditMode && loai) {
@@ -204,10 +257,31 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
       onClose();
     } catch (error) {
       console.error('Error saving loai:', error);
-      setErrors({ submit: 'Failed to save loai. Please try again.' });
+      setErrors({ submit: 'Lưu loài thất bại. Vui lòng thử lại.' });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDistributionPointChange = (index: number, field: keyof DistributionPoint, value: string) => {
+    setDistributionPoints((prev) => prev.map((point, pointIndex) => (
+      pointIndex === index ? { ...point, [field]: value } : point
+    )));
+
+    if (errors.submit) {
+      setErrors((prev) => ({ ...prev, submit: '' }));
+    }
+  };
+
+  const handleAddDistributionPoint = () => {
+    setDistributionPoints((prev) => [...prev, { kinh_do: '', vi_do: '', id_vung_phan_bo: '' }]);
+  };
+
+  const handleRemoveDistributionPoint = (index: number) => {
+    setDistributionPoints((prev) => {
+      if (prev.length <= 1) return prev;
+      return prev.filter((_, pointIndex) => pointIndex !== index);
+    });
   };
 
   const handleCsvUpload = async (file: File) => {
@@ -244,18 +318,18 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
     ten_tieng_viet: 'Ngải cứu',
     ten_goi_khac: 'Ngải rừng',
     ten_ho_khoa_hoc: 'Asteraceae',
-    dac_diem_mo_ta: 'Rare medicinal plant with bitter taste',
-    dang_song: 'Mountain regions and wild grasslands',
-    tru_luong: 'Spring to autumn',
-    muc_do_quy_hiem: 'Endangered',
-    phuong_an_bao_ton: 'Protect natural habitat and promote cultivation',
-    chi_tiet_ky_thuat: 'Propagate by seeds in spring',
-    hien_trang_gay_trong_phat_trien: 'Currently cultivated in central highlands',
-    ky_thuat_trong_cham_soc_thu_hoach: 'Harvest leaves before flowering',
+    dac_diem_mo_ta: 'Cây dược liệu quý, có vị đắng',
+    dang_song: 'Vùng núi và đồng cỏ hoang',
+    tru_luong: 'Từ mùa xuân đến mùa thu',
+    muc_do_quy_hiem: 'Nguy cấp',
+    phuong_an_bao_ton: 'Bảo vệ sinh cảnh tự nhiên và khuyến khích trồng',
+    chi_tiet_ky_thuat: 'Nhân giống bằng hạt vào mùa xuân',
+    hien_trang_gay_trong_phat_trien: 'Hiện đang được trồng tại vùng Tây Nguyên',
+    ky_thuat_trong_cham_soc_thu_hoach: 'Thu hoạch lá trước khi ra hoa',
     collection_uri: 'https://example.com/artemisia.jpg',
-    bo_phan_su_dung: 'Leaves;Roots;Stems',
-    cong_dung: 'Anti-inflammatory;Digestive;Fever reduction',
-    bai_thuoc: 'Traditional fever medicine;Digestive tea',
+    bo_phan_su_dung: 'Lá;Rễ;Thân',
+    cong_dung: 'Kháng viêm;Hỗ trợ tiêu hóa;Hạ sốt',
+    bai_thuoc: 'Bài thuốc hạ sốt dân gian;Trà hỗ trợ tiêu hóa',
     kinh_do: '106.8;106.9;107.0',
     vi_do: '20.5;20.6;20.7',
     id_vung_phan_bo: '1;2;3'
@@ -265,7 +339,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={viewMode ? 'View Loai' : (isEditMode ? 'Edit Loai' : 'Add Loai')}
+      title={viewMode ? 'Xem loài' : (isEditMode ? 'Sửa loài' : 'Thêm loài')}
       className="max-w-2xl"
     >
       {/* Tabs */}
@@ -279,7 +353,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Manual Entry
+            Nhập thủ công
           </button>
           <button
             onClick={() => setActiveTab('csv')}
@@ -289,7 +363,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            CSV Upload
+            Tải lên CSV
           </button>
         </div>
       )}
@@ -299,44 +373,44 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
         <form onSubmit={handleSubmit} className="space-y-4 max-h-96 overflow-y-auto pr-2">
           {/* Basic Information Section */}
           <div className="pb-4">
-            <h3 className="text-sm font-semibold mb-3 text-gray-700">Basic Information</h3>
+            <h3 className="text-sm font-semibold mb-3 text-gray-700">Thông tin cơ bản</h3>
             <Input
-              label="Scientific Name (Ten Khoa Hoc) *"
+              label="Tên khoa học *"
               name="ten_khoa_hoc"
               value={formData.ten_khoa_hoc}
               onChange={handleInputChange}
               error={errors.ten_khoa_hoc}
-              placeholder="Enter scientific name"
+              placeholder="Nhập tên khoa học"
               disabled={viewMode}
             />
 
             <Input
-              label="Vietnamese Name (Ten Tieng Viet)"
+              label="Tên tiếng Việt"
               name="ten_tieng_viet"
               value={formData.ten_tieng_viet}
               onChange={handleInputChange}
-              placeholder="Enter Vietnamese name"
+              placeholder="Nhập tên tiếng Việt"
               disabled={viewMode}
             />
 
             <Input
-              label="Alternative Name (Ten Goi Khac)"
+              label="Tên gọi khác"
               name="ten_goi_khac"
               value={formData.ten_goi_khac}
               onChange={handleInputChange}
-              placeholder="Enter alternative name"
+              placeholder="Nhập tên gọi khác"
               disabled={viewMode}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <Select
-                label="Nganh (Optional filter)"
+                label="Ngành (lọc tùy chọn)"
                 name="ten_nganh_khoa_hoc"
                 value={formData.ten_nganh_khoa_hoc}
                 onChange={handleInputChange}
                 disabled={viewMode}
               >
-                <option value="">All nganhs</option>
+                <option value="">Tất cả ngành</option>
                 {nganhs.map(nganh => (
                   <option key={nganh.ten_khoa_hoc} value={nganh.ten_khoa_hoc}>
                     {nganh.ten_khoa_hoc}
@@ -345,14 +419,14 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
               </Select>
 
               <Select
-                label="Ho (Ten Ho Khoa Hoc) *"
+                label="Họ *"
                 name="ten_ho_khoa_hoc"
                 value={formData.ten_ho_khoa_hoc}
                 onChange={handleInputChange}
                 error={errors.ten_ho_khoa_hoc}
                 disabled={viewMode}
               >
-                <option value="">Select a ho</option>
+                <option value="">Chọn họ</option>
                 {filteredHos.map(ho => (
                   <option key={ho.ten_khoa_hoc} value={ho.ten_khoa_hoc}>
                     {ho.ten_khoa_hoc} {ho.ten_tieng_viet && `(${ho.ten_tieng_viet})`}
@@ -364,83 +438,83 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
 
           {/* Biological Characteristics Section */}
           <div className="pb-4">
-            <h3 className="text-sm font-semibold mb-3 text-gray-700">Biological Characteristics</h3>
+            <h3 className="text-sm font-semibold mb-3 text-gray-700">Đặc điểm sinh học</h3>
             <Input
-              label="Characteristics Description (Dac Diem Mo Ta)"
+              label="Mô tả đặc điểm"
               name="dac_diem_mo_ta"
               value={formData.dac_diem_mo_ta}
               onChange={handleInputChange}
-              placeholder="Describe the plant's characteristics"
+              placeholder="Mô tả đặc điểm của loài"
               disabled={viewMode}
             />
             <Input
-              label="Habitat (Dang Song)"
+              label="Dạng sống / Môi trường sống"
               name="dang_song"
               value={formData.dang_song}
               onChange={handleInputChange}
-              placeholder="Where does it live/grow"
+              placeholder="Loài sống hoặc phát triển ở đâu"
               disabled={viewMode}
             />
             <Input
-              label="Conservation Status (Muc Do Quy Hiem)"
+              label="Mức độ quý hiếm"
               name="muc_do_quy_hiem"
               value={formData.muc_do_quy_hiem}
               onChange={handleInputChange}
-              placeholder="e.g., Endangered, Vulnerable"
+              placeholder="Ví dụ: Nguy cấp, Sắp nguy cấp"
               disabled={viewMode}
             />
             <Input
-              label="Seasonal Availability (Tru Luong)"
+              label="Trữ lượng / Mùa vụ"
               name="tru_luong"
               value={formData.tru_luong}
               onChange={handleInputChange}
-              placeholder="e.g., Spring, Summer, Year-round"
+              placeholder="Ví dụ: Mùa xuân, mùa hè, quanh năm"
               disabled={viewMode}
             />
             <Input
-              label="Conservation Methods (Phuong An Bao Ton)"
+              label="Phương án bảo tồn"
               name="phuong_an_bao_ton"
               value={formData.phuong_an_bao_ton}
               onChange={handleInputChange}
-              placeholder="How to protect and preserve"
+              placeholder="Cách bảo vệ và bảo tồn"
               disabled={viewMode}
             />
           </div>
 
           {/* Cultivation & Harvesting Section */}
           <div className="pb-4">
-            <h3 className="text-sm font-semibold mb-3 text-gray-700">Cultivation & Harvesting</h3>
+            <h3 className="text-sm font-semibold mb-3 text-gray-700">Trồng trọt và thu hoạch</h3>
             <Input
-              label="Cultivation Technique Details (Chi Tiet Ky Thuat)"
+              label="Chi tiết kỹ thuật trồng"
               name="chi_tiet_ky_thuat"
               value={formData.chi_tiet_ky_thuat}
               onChange={handleInputChange}
-              placeholder="Describe growing techniques"
+              placeholder="Mô tả kỹ thuật trồng"
               disabled={viewMode}
             />
             <Input
-              label="Current Development Status (Hien Trang Gay Trong)"
+              label="Hiện trạng gây trồng, phát triển"
               name="hien_trang_gay_trong_phat_trien"
               value={formData.hien_trang_gay_trong_phat_trien}
               onChange={handleInputChange}
-              placeholder="Current cultivation status"
+              placeholder="Hiện trạng canh tác hiện tại"
               disabled={viewMode}
             />
             <Input
-              label="Care & Harvesting Techniques (Ky Thuat Cham Soc)"
+              label="Kỹ thuật chăm sóc và thu hoạch"
               name="ky_thuat_trong_cham_soc_thu_hoach"
               value={formData.ky_thuat_trong_cham_soc_thu_hoach}
               onChange={handleInputChange}
-              placeholder="Describe care and harvesting"
+              placeholder="Mô tả cách chăm sóc và thu hoạch"
               disabled={viewMode}
             />
           </div>
 
           {/* Image & Media Section */}
           <div className="pb-4">
-            <h3 className="text-sm font-semibold mb-3 text-gray-700">Media</h3>
+            <h3 className="text-sm font-semibold mb-3 text-gray-700">Hình ảnh và tư liệu</h3>
             <Input
-              label="Image Folder Path (Collection URI)"
+              label="Đường dẫn thư mục ảnh (Collection URI)"
               name="collection_uri"
               value={formData.collection_uri}
               onChange={handleInputChange}
@@ -455,7 +529,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
                   onClick={(e) => e.stopPropagation()}
                 >
                   <ImageIcon className="w-4 h-4 mr-1" />
-                  View Image Gallery
+                  Xem thư viện ảnh
                 </Link>
               </div>
             )}
@@ -463,60 +537,92 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
 
           {/* Uses & Components Section */}
           <div className="pb-4">
-            <h3 className="text-sm font-semibold mb-3 text-gray-700">Uses & Components (semicolon-separated)</h3>
+            <h3 className="text-sm font-semibold mb-3 text-gray-700">Công dụng và thành phần (phân tách bằng dấu chấm phẩy)</h3>
             <Input
-              label="Usable Parts (Bo Phan Su Dung)"
+              label="Bộ phận sử dụng"
               name="bo_phan_su_dung"
               value={formData.bo_phan_su_dung}
               onChange={handleInputChange}
-              placeholder="e.g., Leaves;Roots;Stems"
+              placeholder="Ví dụ: Lá;Rễ;Thân"
               disabled={viewMode}
             />
             <Input
-              label="General Uses (Cong Dung)"
+              label="Công dụng"
               name="cong_dung"
               value={formData.cong_dung}
               onChange={handleInputChange}
-              placeholder="e.g., Medicine;Tea;Food"
+              placeholder="Ví dụ: Làm thuốc;Pha trà;Thực phẩm"
               disabled={viewMode}
             />
             <Input
-              label="Traditional Medicine (Bai Thuoc)"
+              label="Bài thuốc"
               name="bai_thuoc"
               value={formData.bai_thuoc}
               onChange={handleInputChange}
-              placeholder="Traditional remedies"
+              placeholder="Các bài thuốc dân gian"
               disabled={viewMode}
             />
           </div>
 
           {/* Geographic Distribution Section */}
           <div className="pb-4">
-            <h3 className="text-sm font-semibold mb-3 text-gray-700">Geographic Distribution (semicolon-separated)</h3>
-            <Input
-              label="Longitude (Kinh Do)"
-              name="kinh_do"
-              value={formData.kinh_do}
-              onChange={handleInputChange}
-              placeholder="e.g., 106.8;106.9;107.0"
-              disabled={viewMode}
-            />
-            <Input
-              label="Latitude (Vi Do)"
-              name="vi_do"
-              value={formData.vi_do}
-              onChange={handleInputChange}
-              placeholder="e.g., 20.5;20.6;20.7"
-              disabled={viewMode}
-            />
-            <Input
-              label="Region IDs (ID Vung Phan Bo)"
-              name="id_vung_phan_bo"
-              value={formData.id_vung_phan_bo}
-              onChange={handleInputChange}
-              placeholder="e.g., 1;2;3"
-              disabled={viewMode}
-            />
+            <h3 className="text-sm font-semibold mb-3 text-gray-700">Phân bố địa lý</h3>
+
+            <div className="space-y-3">
+              {distributionPoints.map((point, index) => (
+                <div key={index} className="rounded-md border border-gray-200 p-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <Input
+                      label={`Kinh độ ${index + 1}`}
+                      value={point.kinh_do}
+                      onChange={(e) => handleDistributionPointChange(index, 'kinh_do', e.target.value)}
+                      placeholder="Ví dụ: 106.8"
+                      disabled={viewMode}
+                    />
+                    <Input
+                      label={`Vĩ độ ${index + 1}`}
+                      value={point.vi_do}
+                      onChange={(e) => handleDistributionPointChange(index, 'vi_do', e.target.value)}
+                      placeholder="Ví dụ: 20.5"
+                      disabled={viewMode}
+                    />
+                    <Select
+                      label={`Vùng phân bố ${index + 1}`}
+                      value={point.id_vung_phan_bo}
+                      onChange={(e) => handleDistributionPointChange(index, 'id_vung_phan_bo', e.target.value)}
+                      disabled={viewMode}
+                    >
+                      <option value="">Chọn vùng phân bố</option>
+                      {vungPhanBos.map((vung) => (
+                        <option key={vung.id} value={vung.id}>
+                          {vung.id} - {vung.ten_dia_phan_hanh_chinh}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+
+                  {!viewMode && distributionPoints.length > 1 && (
+                    <div className="mt-2 flex justify-end">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => handleRemoveDistributionPoint(index)}
+                      >
+                        Xóa điểm
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {!viewMode && (
+              <div className="mt-3">
+                <Button type="button" variant="secondary" onClick={handleAddDistributionPoint}>
+                  Thêm điểm
+                </Button>
+              </div>
+            )}
           </div>
 
           {errors.submit && (
@@ -530,14 +636,14 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
               onClick={onClose}
               disabled={loading}
             >
-              {viewMode ? 'Close' : 'Cancel'}
+              {viewMode ? 'Đóng' : 'Hủy'}
             </Button>
             {!viewMode && (
               <Button
                 type="submit"
                 disabled={loading}
               >
-                {loading ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
+                {loading ? 'Đang lưu...' : (isEditMode ? 'Cập nhật' : 'Tạo mới')}
               </Button>
             )}
           </div>
@@ -557,7 +663,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
               variant="secondary"
               onClick={onClose}
             >
-              Close
+              Đóng
             </Button>
           </div>
         </div>
