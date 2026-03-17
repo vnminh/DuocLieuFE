@@ -595,7 +595,7 @@ export function LoaiFormModal({ isOpen, onClose, onSuccess, loai, viewMode }: Lo
                       <option value="">Chọn vùng phân bố</option>
                       {vungPhanBos.map((vung) => (
                         <option key={vung.id} value={vung.id}>
-                          {vung.id} - {vung.ten_dia_phan_hanh_chinh}
+                          {vung.ten_dia_phan_hanh_chinh}
                         </option>
                       ))}
                     </Select>
